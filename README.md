@@ -1,6 +1,6 @@
 # signal_processor
 
-This is a signal processing library. It contains signal processing algorithms
+This is a signal processing library. It contains signal processing algorithms.
 
 ## Unit testing
 
