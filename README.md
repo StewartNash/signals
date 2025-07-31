@@ -12,3 +12,11 @@ user@computer:~/signal_processor$ python3 -m unittest discover tests
 ```
 user@computer:~/signal_processor$ python3 -m examples.examples_3_2_7_iir
 ```
+
+## TODO
+- Finish unit tests
+- Finish IIR filter examples
+- Finish FIR filter examples
+- Add FFT algorithms
+- Create Filter class
+	- Passband frequencies, stopband frequencies
