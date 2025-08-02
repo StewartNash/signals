@@ -130,7 +130,7 @@ def kaiser_lowpass(passband_frequency_high,
 	
 	return impulse_response
 	
-def kaiser_bandpass(passband_frequency_low,
+def kaiser_bandpass_alt(passband_frequency_low,
 	passband_frequency_high,
 	stopband_frequency_low,
 	stopband_frequency_high,
@@ -164,6 +164,38 @@ def kaiser_bandpass(passband_frequency_low,
 	impulse_response /= np.sum(impulse_response)
 	
 	return impulse_response
+	
+def kaiser_bandpass(fp1, fp2, fs1, fs2, fs, N, kaiser_coeffs):
+	# Transition midpoints
+	delta_f_1 = fp1 - fs1
+	delta_f_h = fs2 - fp2
+	delta_f = min(delta_f_1, delta_f_h)
+	fc1 = fp1 - delta_f/2
+	fc2 = fp2 + delta_f/2
+
+	M = N - 1
+	n = np.arange(N)
+	# Ideal bandpass (difference of two lowpass)
+	h_ideal = (2*fc2/fs)*np.sinc(2*fc2*(n - M/2)/fs) \
+	    - (2*fc1/fs)*np.sinc(2*fc1*(n - M/2)/fs)
+
+	# Apply Kaiser window (already length N)
+	h = np.array(kaiser_coeffs) * h_ideal
+
+	fc_mid = 0.5 * (fp1 + fp2)
+	omega = 2 * math.pi * fc_mid / fs
+	re = 0.0
+	im = 0.0
+	for n in range(N):
+	    re += h[n] * math.cos(omega * n)
+	    im -= h[n] * math.sin(omega * n)
+	gain = math.sqrt(re*re + im*im)
+	h /= gain
+
+	## Normalize for unity gain in passband
+	#h /= np.sum(h)
+	
+	return h
 	
 def magnitude_response(omega, impulse_response, sampling_frequency, filter_order):
 	frequency = omega / (2 * math.pi)
