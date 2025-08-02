@@ -6,12 +6,13 @@ from signal_processor.finite_impulse_response import kaiser_filter_order, kaiser
 # -------------------------------
 # Example 5.4: Lowpass FIR Filter
 # -------------------------------
+# Using the Kaiser window method, design an FIR lowpass digital filter with given specifications
 
 FREQUENCY_RESOLUTION = 500
 
 # Filter specifications
-actual_passband_ripple = 0.1  # dB
-minimum_stopband_attenuation = 44  # dB
+actual_passband_ripple = 0.1  # dB (less than)
+minimum_stopband_attenuation = 44  # dB (greater than)
 passband_frequency = 500  # Hz
 stopband_frequency = 750  # Hz
 sampling_frequency = 2500  # Hz

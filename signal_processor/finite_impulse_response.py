@@ -109,27 +109,29 @@ def kaiser_filter_order(filter_type,
 	return (filter_order, delta, minimum_stopband_attenuation, parameter_d)
 
 def kaiser_lowpass(passband_frequency_high,
-	stopband_frequency_low,
-	sampling_frequency,
-	filter_order,
-	kaiser_coeffs):
+                   stopband_frequency_low,
+                   sampling_frequency,
+                   filter_order,
+                   kaiser_coeffs):
 
-	cutoff_frequency = 0.5 * (passband_frequency_high + stopband_frequency_low)
-	impulse_response = []
-	n = filter_order
-	#for i in range((filter_order - 1) // 2 + 1):
-	for i in range(filter_order):
-		if i == 0:
-			sinc = 2 * cutoff_frequency / sampling_frequency
-		else:
-			arg = 2 * cutoff_frequency * (i - (n - 1) // 2) / sampling_frequency
-			#sinc = math.sin(arg) / (i - (n - 1) // 2)
-			sinc = 2 * cutoff_frequency * np.sinc(arg)
-		impulse_response.append(sinc * kaiser_coeffs[i])
-	impulse_response /= np.sum(impulse_response)
-	
-	return impulse_response
-	
+    cutoff_frequency = 0.5 * (passband_frequency_high + stopband_frequency_low)
+    impulse_response = []
+    M = filter_order - 1
+
+    for i in range(filter_order):
+        k = i - M/2
+        if k == 0:
+            h = 2 * cutoff_frequency / sampling_frequency
+        else:
+            h = math.sin(2 * math.pi * cutoff_frequency * k / sampling_frequency) / (math.pi * k)
+        impulse_response.append(h * kaiser_coeffs[i])
+
+    # Normalize for unity gain at DC
+    gain = sum(impulse_response)
+    impulse_response = [x / gain for x in impulse_response]
+    
+    return impulse_response
+
 def kaiser_bandpass(passband_frequency_low,
 	passband_frequency_high,
 	stopband_frequency_low,
