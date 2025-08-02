@@ -130,7 +130,7 @@ def kaiser_lowpass(passband_frequency_high,
 	
 	return impulse_response
 	
-def kaiser_bandpass_alt(passband_frequency_low,
+def kaiser_bandpass(passband_frequency_low,
 	passband_frequency_high,
 	stopband_frequency_low,
 	stopband_frequency_high,
@@ -153,49 +153,25 @@ def kaiser_bandpass_alt(passband_frequency_low,
 	fc1 = cutoff_frequency_low
 	fc2 = cutoff_frequency_high
 		
+	center_frequency = (fp1 + fp2) / 2
+	omega = 2 * math.pi * center_frequency / f
+		
+	gain = 0
 	impulse_response = []
-	n = filter_order
+	n = filter_order - 1
 	for i in range(filter_order):
-		if i == 0:
-			h = 2 * (fc2 - fc1) / f
+		m = i - n / 2
+		if m == 0:
+			h = 2 * (fc2 - fc1) / f 
 		else:
-			h = (math.sin(2 * math.pi * i * fc2 / f) - math.sin(2 * math.pi * fc1 / f)) / (i * math.pi)
-		impulse_response.append(h * kaiser_coeffs[i])
-	impulse_response /= np.sum(impulse_response)
+			h = (math.sin(2 * math.pi * m * fc2 / f) - math.sin(2 * math.pi * m * fc1 / f)) / (m * math.pi)
+		temporary = h * kaiser_coeffs[i]
+		gain += temporary * np.exp(1j * omega * i)
+		impulse_response.append(temporary)
 	
-	return impulse_response
+	impulse_response = [x / abs(gain) for x in impulse_response]
 	
-def kaiser_bandpass(fp1, fp2, fs1, fs2, fs, N, kaiser_coeffs):
-	# Transition midpoints
-	delta_f_1 = fp1 - fs1
-	delta_f_h = fs2 - fp2
-	delta_f = min(delta_f_1, delta_f_h)
-	fc1 = fp1 - delta_f/2
-	fc2 = fp2 + delta_f/2
-
-	M = N - 1
-	n = np.arange(N)
-	# Ideal bandpass (difference of two lowpass)
-	h_ideal = (2*fc2/fs)*np.sinc(2*fc2*(n - M/2)/fs) \
-	    - (2*fc1/fs)*np.sinc(2*fc1*(n - M/2)/fs)
-
-	# Apply Kaiser window (already length N)
-	h = np.array(kaiser_coeffs) * h_ideal
-
-	fc_mid = 0.5 * (fp1 + fp2)
-	omega = 2 * math.pi * fc_mid / fs
-	re = 0.0
-	im = 0.0
-	for n in range(N):
-	    re += h[n] * math.cos(omega * n)
-	    im -= h[n] * math.sin(omega * n)
-	gain = math.sqrt(re*re + im*im)
-	h /= gain
-
-	## Normalize for unity gain in passband
-	#h /= np.sum(h)
-	
-	return h
+	return impulse_response	
 	
 def magnitude_response(omega, impulse_response, sampling_frequency, filter_order):
 	frequency = omega / (2 * math.pi)
