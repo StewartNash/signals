@@ -109,28 +109,59 @@ def kaiser_filter_order(filter_type,
 	return (filter_order, delta, minimum_stopband_attenuation, parameter_d)
 
 def kaiser_lowpass(passband_frequency_high,
-                   stopband_frequency_low,
-                   sampling_frequency,
-                   filter_order,
-                   kaiser_coeffs):
+				   stopband_frequency_low,
+				   sampling_frequency,
+				   filter_order,
+				   kaiser_coeffs):
 
-    cutoff_frequency = 0.5 * (passband_frequency_high + stopband_frequency_low)
-    impulse_response = []
-    M = filter_order - 1
+	cutoff_frequency = 0.5 * (passband_frequency_high + stopband_frequency_low)
+	impulse_response = []
+	M = filter_order - 1
 
-    for i in range(filter_order):
-        k = i - M/2
-        if k == 0:
-            h = 2 * cutoff_frequency / sampling_frequency
-        else:
-            h = math.sin(2 * math.pi * cutoff_frequency * k / sampling_frequency) / (math.pi * k)
-        impulse_response.append(h * kaiser_coeffs[i])
+	for i in range(filter_order):
+		k = i - M/2
+		if k == 0:
+			h = 2 * cutoff_frequency / sampling_frequency
+		else:
+			h = math.sin(2 * math.pi * cutoff_frequency * k / sampling_frequency) / (math.pi * k)
+		impulse_response.append(h * kaiser_coeffs[i])
 
-    # Normalize for unity gain at DC
-    gain = sum(impulse_response)
-    impulse_response = [x / gain for x in impulse_response]
-    
-    return impulse_response
+	# Normalize for unity gain at DC
+	gain = sum(impulse_response)
+	impulse_response = [x / gain for x in impulse_response]
+	
+	return impulse_response
+
+def kaiser_highpass(passband_frequency_low,
+				   stopband_frequency_high,
+				   sampling_frequency,
+				   filter_order,
+				   kaiser_coeffs):
+
+	cutoff_frequency = 0.5 * (passband_frequency_low + stopband_frequency_high)
+	
+	fp = passband_frequency_low
+	fc = cutoff_frequency
+	f = sampling_frequency
+	impulse_response = []
+	M = filter_order - 1
+
+	omega = 2 * math.pi * (f / 2) / f
+	gain = 0
+	for i in range(filter_order):
+		k = i - M/2
+		if k == 0:
+			h = 1 - 2 * fc / f
+		else:
+			h = - (2 * fc / f) * math.sin(2 * math.pi * k * fc / f) / (2 * math.pi * k * fc / f)
+		temporary = h * kaiser_coeffs[i]
+		gain += temporary * np.exp(-1j * omega * i)
+		impulse_response.append(temporary)
+
+	# Normalize for unity gain at passband frequency
+	impulse_response = [x / abs(gain) for x in impulse_response]
+	
+	return impulse_response
 
 def kaiser_bandpass(passband_frequency_low,
 	passband_frequency_high,
@@ -167,6 +198,49 @@ def kaiser_bandpass(passband_frequency_low,
 			h = 2 * (fc2 - fc1) / f 
 		else:
 			h = (math.sin(2 * math.pi * m * fc2 / f) - math.sin(2 * math.pi * m * fc1 / f)) / (m * math.pi)
+		temporary = h * kaiser_coeffs[i]
+		gain += temporary * np.exp(1j * omega * i)
+		impulse_response.append(temporary)
+	
+	impulse_response = [x / abs(gain) for x in impulse_response]
+	
+	return impulse_response
+	
+def kaiser_bandstop(passband_frequency_low,
+	passband_frequency_high,
+	stopband_frequency_low,
+	stopband_frequency_high,
+	sampling_frequency,
+	filter_order,
+	kaiser_coeffs):
+
+	f = sampling_frequency
+	fp1 = passband_frequency_low
+	fp2 = passband_frequency_high
+	fs1 = stopband_frequency_low
+	fs2 = stopband_frequency_high
+
+	delta_f_1 = fs1 -fp1
+	delta_f_h = fp2 - fs2
+	delta_f = min(delta_f_1, delta_f_h)
+	cutoff_frequency_low = fp1 + delta_f / 2
+	cutoff_frequency_high = fp2 - delta_f / 2
+
+	fc1 = cutoff_frequency_low
+	fc2 = cutoff_frequency_high
+		
+	center_frequency = (fp1 + fp2) / 2
+	omega = 2 * math.pi * ((fp2 + f / 2) / 2) / f
+		
+	gain = 0
+	impulse_response = []
+	n = filter_order - 1
+	for i in range(filter_order):
+		m = i - n / 2
+		if m == 0:
+			h = 2 * (fc1 - fc2) / f + 1
+		else:
+			h = (math.sin(2 * math.pi * m * fc1 / f) - math.sin(2 * math.pi * m * fc2 / f)) / (m * math.pi)
 		temporary = h * kaiser_coeffs[i]
 		gain += temporary * np.exp(1j * omega * i)
 		impulse_response.append(temporary)
