@@ -1,6 +1,31 @@
 # signal_processor
 
-This is a signal processing library. It contains signal processing algorithms.
+This is a signal processing library. It contains signal processing algorithms. Currently, the signal processing is exclusively digital signal processing (DSP).
+
+## Infinite Impulse Response
+
+The 'infinite_impulse_response' module contains algorithms for infinite impulse response (IIR) filters.
+
+## Finite Impulse Response
+
+The 'finite_impulse_response' module contains algorithms for finite impulse response (FIR) filters.
+
+## Fast Fourier Transform
+
+The 'fast_fourier_transform' module contains implementations of the fast fourier transform (FFT).
+
+## Multirate Processing
+
+The 'multirate_processing' module contains examples and abstract implementations of multirate DSP processes. This comprises decimation and interpolation.
+
+## Linear System Noise Response
+
+
+The 'noise_response' module contains examples and abstract implementations of arbitrary linear systems constructed in the library to noise.
+ 
+## Truncation Effects
+
+The 'truncation_effects' module contains examples and abstract implementations examining the effect of finite register lengths.
 
 ## Unit testing
 
