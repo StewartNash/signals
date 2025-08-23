@@ -31,6 +31,7 @@ The 'truncation_effects' module contains examples and abstract implementations e
 
 ```
 user@computer:~/signal_processor$ python3 -m unittest discover tests
+user@computer:~/signal_processor$ python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
 ## Running examples
