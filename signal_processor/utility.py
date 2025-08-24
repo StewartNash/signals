@@ -43,3 +43,15 @@ def real_to_complex(number_list):
 	output = [(r, 0.0)  for r in number_list]
 	
 	return output
+
+def chebyshev(x, n):
+	'''
+	Chebyshev polynomial of order n
+	'''
+	if n > 1:
+		return 2 * x * chebyshev(x, n - 1) - chebyshev(x, n - 2)
+	elif n == 1:
+		return x
+	else: # n == 0
+		return 1
+

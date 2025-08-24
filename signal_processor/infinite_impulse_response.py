@@ -101,7 +101,7 @@ def hplp_computations(maximum_passband_attenuation,
 	parameter_A = parameter_lambda / parameter_epsilon
 	parameter_K0 = omega_p / omega_s
 	
-	return parameter_K0, parameter_A
+	return parameter_K0, parameter_A, parameter_epsilon, parameter_lambda
 	
 def highpass_computations(maximum_passband_attenuation,
 	minimum_stopband_attenuation,
@@ -109,7 +109,7 @@ def highpass_computations(maximum_passband_attenuation,
 	stopband_edge_frequency,
 	sampling_frequency):
 	
-	parameter_K0, parameter_A = hplp_computations(maximum_passband_attenuation,
+	parameter_K0, parameter_A, parameter_epsilon, parameter_lambda = hplp_computations(maximum_passband_attenuation,
 	minimum_stopband_attenuation,
 	passband_edge_frequency,
 	stopband_edge_frequency,
@@ -128,7 +128,7 @@ def lowpass_computations(maximum_passband_attenuation,
 	stopband_edge_frequency,
 	sampling_frequency):
 	
-	parameter_K0, parameter_A = hplp_computations(maximum_passband_attenuation,
+	parameter_K0, parameter_A, parameter_epsilon, parameter_lambda = hplp_computations(maximum_passband_attenuation,
 	minimum_stopband_attenuation,
 	passband_edge_frequency,
 	stopband_edge_frequency,
@@ -203,7 +203,11 @@ def butterworth_analog_poles(filter_order, passband_angular_frequency=0):
 		k = [i + 1 for i in range(int((N + 1) / 2))]
 	else: # Even
 		k = [i + 1 for i in range(int(N / 2))]
-	
+
+	#poles = []
+	#for k_ in k:
+	#	x = (2 * k_ - 1) * math.pi / (2 * N)
+	#	poles.append((-math.sin(x), math.cos(x)))	
 	poles = [(-math.sin(math.pi * (2 * k_ - 1) / (2 * N)), math.cos(math.pi * ((2 * k_) - 1) / (2 * N))) for k_ in k]
 	#if passband_angular_frequency and not normalized:
 	if passband_angular_frequency:
@@ -211,4 +215,108 @@ def butterworth_analog_poles(filter_order, passband_angular_frequency=0):
 		poles = [(s[0] * omega ** (- 1 / N), s[1] * omega ** (- 1 / N)) for s in poles]
 	
 	return poles
+
+#def chebyshev_analog_poles(filter_order, parameter_epsilon, passband_angular_frequency=0, normalized=True):
+def chebyshev_analog_poles(filter_order, parameter_epsilon, passband_angular_frequency=0):
+	N = filter_order
+	epsilon = parameter_epsilon
+	
+	y = [,]
+	y[0] = math.asinh(1 / epsilon) / N
+	y[1] = -math.asinh(1 / epsilon) / N
+	if N % 2: # Odd
+		k = [i + 1 for i in range(int((N + 1) / 2))]
+	else: # Even
+		k = [i + 1 for i in range(int(N / 2))]
+	#poles = []
+	#for k_ in k:
+	#	x = (2 * k_ - 1) * math.pi / (2 * N)
+	#	for y_ in y:
+	#		poles.append((-math.sin(x) * math.sinh(y_), math.cos(x) * math.cosh(y_))
+	poles = [(-math.sin(math.pi * (2 * k_ - 1) / (2 * N)) * math.sinh(y_), math.cos(math.pi * ((2 * k_) - 1) / (2 * N)) * math.cosh(y_)) for y_ in y for k_ in k]	
+	#if passband_angular_frequency and not normalized:
+	if passband_angular_frequency:
+		omega = passband_angular_frequency
+		poles = [(s[0] * omega, s[1] * omega) for s in poles]
+	
+	return poles
+
+def omega_k(q, k, N, M=25):
+	if k % 2: # Odd
+		u = k
+	else: # Even
+		u = k - 0.5
+	numerator = 0
+	denominator = 0
+	for m in range (1, M + 1):
+		numerator +=  (-1) ** m * q ** (m * (m + 1)) * math.sin((2 * m + 1) * math.pi * u / N)
+		denominator += (-1) ** m * q ** (m ** 2) * math.cos(2 * m * math.pi * u / N)
+	numerator = 2 * q ** 0.25 * numerator
+	denominator = 1 + 2 * denominator
+	
+	return numerator / denominator
+	
+def sigma_0(max_passband_attenuation, M=25):
+	A_p = max_passband_attenuation
+	Lambda = math.log((10 ** (0.05 * A_p) + 1) / (10 ** (0.05 * A_p) - 1))
+	numerator = 0
+	denominator = 0
+	for m in range (1, M + 1):
+		numerator +=  (-1) ** m * q ** (m * (m + 1)) * math.sinh((2 * m + 1) * Lambda)
+		denominator += (-1) ** m * q ** (m ** 2) * math.cosh(2 * m * Lambda)
+	numerator = -2 * q ** 0.25 * numerator
+	denominator = 1 + 2 * denominator
+	
+	return numerator / denominator
+	
+#def elliptic_analog_poles(filter_order, passband_angular_frequency=0, normalized=True):
+def elliptic_analog_poles(filter_order, parameter_K, A_p, passband_angular_frequency=0):
+	N = filter_order
+	K = parameter_K
+
+	if N % 2: # Odd
+		k = [i + 1 for i in range(int((N - 1) / 2))]
+	else: # Even
+		k = [i + 1 for i in range(int(N / 2))]
+		
+	q_0 = (1 - (1 - K ** 2) ** 0.25) / (2 * (1 + (1 - K ** 2) ** 0.25))
+	q = q_0 + 2 * q_0 ** 5 + 15 * q_0 ** 9 + 150 * q_0 ** 13
+	sigma_0_ = sigma_0(A_p)
+		
+	poles = []
+	for k_ in k:
+		omega_k_ = omega_k(q, k_, N)
+		V_k = ((1 - K * omega_k_ ** 2) * (1 - omega_k_ ** 2 / K)) ** 0.5
+		W = ((1 + K * sigma_0_ ** 2) * (1 + sigma_0_ ** 2 / K)) ** 0.5
+		pole = (sigma_0_ * V_k / (1 + omega_0_ ** 2 * omega_k_ ** 2), omega_k_ * W / (1 + omega_0_ ** 2 * omega_k_ ** 2))
+		pole_conjugate = (pole[0], -pole[1])
+		poles.append(pole)
+		poles.append(pole_conjugate)
+	
+	return poles
+
+#def elliptic_analog_zeros(filter_order, passband_angular_frequency=0, normalized=True):
+def elliptic_analog_zeros(filter_order, parameter_K, passband_angular_frequency=0):
+	N = filter_order
+	K = parameter_K
+
+	if N % 2: # Odd
+		k = [i + 1 for i in range(int((N - 1) / 2))]
+	else: # Even
+		k = [i + 1 for i in range(int(N / 2))]
+		
+	q_0 = (1 - (1 - K ** 2) ** 0.25) / (2 * (1 + (1 - K ** 2) ** 0.25))
+	q = q_0 + 2 * q_0 ** 5 + 15 * q_0 ** 9 + 150 * q_0 ** 13
+	sigma_0_ = sigma_0(A_p)
+		
+	zeros_ = []
+	for k_ in k:
+		omega_k_ = omega_k(q, k_, N)
+		zero_ = (0, 1 / omega_k_)
+		zero_conjugate = (pole[0], -pole[1])
+		zeros_.append(zero_)
+		zeros_.append(zero_conjugate)
+
+	return zeros_
+	
 

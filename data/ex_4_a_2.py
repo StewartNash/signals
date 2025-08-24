@@ -29,7 +29,6 @@ s_plane_poles = [
 	(-0.3798656, -0.2781140)
 ]
 
-
 # z-plane zeros (lowpass)
 # (real, imaginary)
 z_plane_zeros = [
