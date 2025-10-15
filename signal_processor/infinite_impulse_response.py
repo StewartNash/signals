@@ -221,9 +221,7 @@ def chebyshev_analog_poles(filter_order, parameter_epsilon, passband_angular_fre
 	N = filter_order
 	epsilon = parameter_epsilon
 	
-	y = [,]
-	y[0] = math.asinh(1 / epsilon) / N
-	y[1] = -math.asinh(1 / epsilon) / N
+	y = [math.asinh(1 / epsilon) / N, -math.asinh(1 / epsilon) / N]
 	if N % 2: # Odd
 		k = [i + 1 for i in range(int((N + 1) / 2))]
 	else: # Even
