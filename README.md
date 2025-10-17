@@ -2,6 +2,14 @@
 
 This is a signal processing library. It contains signal processing algorithms. Currently, the signal processing is exclusively digital signal processing (DSP).
 
+## NashHertz Filters
+
+This package contains a filter design application. In order to run, issue the following command:
+'''
+user@computer:~/signal_processor$ python3 -m nashhertz.main
+'''
+This application will be segregated to its own repository in the future.
+
 ## Infinite Impulse Response
 
 The 'infinite_impulse_response' module contains algorithms for infinite impulse response (IIR) filters.
@@ -19,7 +27,6 @@ The 'fast_fourier_transform' module contains implementations of the fast fourier
 The 'multirate_processing' module contains examples and abstract implementations of multirate DSP processes. This comprises decimation and interpolation.
 
 ## Linear System Noise Response
-
 
 The 'noise_response' module contains examples and abstract implementations of arbitrary linear systems constructed in the library to noise.
  
