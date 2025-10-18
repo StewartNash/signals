@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from nashhertz.gui.quickfilter import QuickFilterForm
+from nashhertz.gui.advanced import AdvancedForm
 
 class MainWindow(tk.Tk):
     def __init__(self):
@@ -9,14 +10,28 @@ class MainWindow(tk.Tk):
         self.title("NashHertz Filters")
         self.geometry("1080x720")
         self.create_menu()
-        self.create_widgets()
+        self.main_frame = ttk.Frame(self)
+        self.main_frame.pack(fill='both', expand=True)
+        self.forms = {}
+        
+        self.forms['QuickFilter'] = QuickFilterForm(self.main_frame)
+        self.forms['Advanced'] = AdvancedForm(self.main_frame)
+        
+        for form in self.forms.values():
+            form.grid(row=0, column=0, sticky='NSEW')
+            
+        self.show_form('QuickFilter')
         
         display_notice = True
         if display_notice:
             self.notice_window = NoticeWindow(self)
             #self.wait_window(self.notice_form)
         else:
-            self.notice_form = Null
+            self.notice_form = None
+
+    def show_form(self, name):
+        form = self.forms[name]
+        form.tkraise()
             
     def create_menu(self):
         self.menubar = tk.Menu(self)
