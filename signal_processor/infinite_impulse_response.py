@@ -1,5 +1,7 @@
 import math
 import enum
+from signal_processor.utility import bilinear_transform
+from signal_processor.utility import to_complex, complex_add, complex_subtract, complex_multiply, complex_divide
 
 # filter_order			nk, NK
 # passband_frequency		fp
@@ -71,6 +73,7 @@ import enum
 # 8. Compute coefficients B1,k for odd first-order section (N-odd only)
 # 9. Determine second order section normalization coefficients
 
+#TODO: Create a Filter class which encapsulates all filter parameters
 
 class FilterFamily(enum.Enum):
 	BUTTERWORTH = 1
@@ -215,6 +218,19 @@ def butterworth_analog_poles(filter_order, passband_angular_frequency=0):
 		poles = [(s[0] * omega ** (- 1 / N), s[1] * omega ** (- 1 / N)) for s in poles]
 	
 	return poles
+	
+def butterworth_digital_poles(filter_order, filter_type, frequency_scaling=0):
+    if frequeny_scaling:
+        alpha = frequency_scaling
+        analog_poles = [(alpha * pole[0], alpha * pole[1]) for pole in analog_poles]
+    poles = [bilinear_tranform(pole) for pole in analog_poles]
+
+    return poles
+    
+def butterworth_digital_zeros(filter_order):
+    zeros = [(-1, 0) for x in range(filter_order)]
+    
+    return zeros
 
 #def chebyshev_analog_poles(filter_order, parameter_epsilon, passband_angular_frequency=0, normalized=True):
 def chebyshev_analog_poles(filter_order, parameter_epsilon, passband_angular_frequency=0):
@@ -317,4 +333,47 @@ def elliptic_analog_zeros(filter_order, parameter_K, passband_angular_frequency=
 
 	return zeros_
 	
+def frequency_scaling_parameter(filter_family,
+        sampling_frequency,
+        passband_frequency,
+        order=0,
+        passband_ripple=0,
+        stopband_frequency=0,
+        filter_type=FilterType.LOWPASS):
+        alpha = 0
+        Ap = passband_ripple
+        F = sampling_frequency
+        fp = passband_frequency
+        fs = stopband_frequency
+        N = order        
+        if filter_family == FilterFamily.BUTTERWORTH && filter_type == FilterType.LOWPASS:
+            alpha = (10 ** (0.1 * Ap) - 1) ** (- 1 / 2 * N) * math.tan(math.pi * fp / F)
+        elif filter_family == FilterFamily.BUTTERWORTH && filter_type == FilterType.HIGHPASS:
+            alpha = (10 ** (0.1 * Ap) - 1) ** (1 / 2 * N) * math.tan(math.pi * fp / F)            
+        elif filter_family == FilterFamily.CHEBYSHEV:
+            alpha = math.tan(math.pi * fp / F)
+        elif filter_family == FilterFamily.ELLIPTIC:
+            alpha = (math.tan(math.pi * fp / F) * math.tan(math.pi * fs / F)) ** 0.5
+        else:
+            raise Exception("Filter family not recognized.")
+        
+        return alpha
+        
+def frequency_transformation(values, filter_type, upper_passband_frequency, lower_passband_frequency=0):
+    s = values
+    omega_u = upper_passband_frequency
+    omega_l = lower_passband_frequency
+    if (filter_type == FilterType.LOWPASS):
+        s = [complex_divide(x, to_complex(omega_u)) for x in s]
+    elif (filter_type == FilterType.HIGHPASS):
+        s = [complex_divide(to_complex(omega_u), x) for x in s]
+    elif (filter_type == FilterType.BANDPASS):
+         s = [complex_divide(complex_add(complex_multiply(x, x), to_complex(omega_l * omega_u)), complex_multiply(x, to_complex(omega_u - omega_l))) for x in s]
+    elif (filter_type == FilterType.BANDSTOP):
+        s = [complex_divide(complex_multiply(x, to_complex(omega_u - omega_l)), complex_add(complex_multiply(x, x), to_complex(omega_l * omega_u))) for x in s]
+
+    return s
+
+def analog_frequency_transformation(values, filter_type, upper_passband_frequency, lower_passband_frequency=0):
+    return frequency_transformation(values, filter_type, upper_passband_frequency, lower_passband_frequency)
 
