@@ -38,10 +38,14 @@ analog_poles = butterworth_analog_poles(10)
 Ap = maximum_passband_attenuation
 alpha = frequency_scaling_parameter(FilterFamily.BUTTERWORTH, fp2, F, N=N, Ap=Ap)
 digital_poles = butterworth_digital_poles(analog_poles, alpha)
-print(digital_poles)
+print("Digital Poles")
+for pole in digital_poles:
+    print(pole)
 denominator_coefficients = polynomial_coefficients(digital_poles)
 numerator_coefficients = [(2, 1)] * len(denominator_coefficients)
-print(denominator_coefficients)
+print("Denominator Coefficients")
+for coefficient in denominator_coefficients:
+    print(coefficient)
 
 b = numerator_coefficients
 a = denominator_coefficients

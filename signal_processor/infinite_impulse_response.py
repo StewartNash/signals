@@ -219,11 +219,13 @@ def butterworth_analog_poles(filter_order, passband_angular_frequency=0):
 	
 	return poles
 	
-def butterworth_digital_poles(filter_order, filter_type, frequency_scaling=0):
-    if frequeny_scaling:
+# filter_type == FilterType.LOWPASS
+def butterworth_digital_poles(filter_order, frequency_scaling=0):
+    analog_poles = butterworth_analog_poles(filter_order)
+    if frequency_scaling:
         alpha = frequency_scaling
         analog_poles = [(alpha * pole[0], alpha * pole[1]) for pole in analog_poles]
-    poles = [bilinear_tranform(pole) for pole in analog_poles]
+    poles = [bilinear_transform(pole) for pole in analog_poles]
 
     return poles
     
@@ -346,9 +348,9 @@ def frequency_scaling_parameter(filter_family,
         fp = passband_frequency
         fs = stopband_frequency
         N = order        
-        if filter_family == FilterFamily.BUTTERWORTH && filter_type == FilterType.LOWPASS:
+        if filter_family == FilterFamily.BUTTERWORTH and filter_type == FilterType.LOWPASS:
             alpha = (10 ** (0.1 * Ap) - 1) ** (- 1 / 2 * N) * math.tan(math.pi * fp / F)
-        elif filter_family == FilterFamily.BUTTERWORTH && filter_type == FilterType.HIGHPASS:
+        elif filter_family == FilterFamily.BUTTERWORTH and filter_type == FilterType.HIGHPASS:
             alpha = (10 ** (0.1 * Ap) - 1) ** (1 / 2 * N) * math.tan(math.pi * fp / F)            
         elif filter_family == FilterFamily.CHEBYSHEV:
             alpha = math.tan(math.pi * fp / F)

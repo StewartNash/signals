@@ -1,5 +1,5 @@
 from signal_processor.infinite_impulse_response import compute_filter_order, lowpass_computations, FilterType, FilterFamily
-from signal_processor.infinite_impulse_response import butterworth_analog_poles
+from signal_processor.infinite_impulse_response import butterworth_analog_poles, butterworth_digital_poles
 
 # ----------------------------------
 # Example 4.A.1: Butterworth Lowpass
@@ -29,5 +29,30 @@ s_plane_poles = [
 	(-0.8910066, 0.4539905),
 	(-0.9876884, 0.1564344)
 ]
+
+# z-plane zeros (real, imaginary)
+z_plane_zeros = [
+	(-1.0000000, 0.0000000),
+	(-1.0000000, 0.0000000),
+	(-1.0000000, 0.0000000),
+	(-1.0000000, 0.0000000),
+	(-1.0000000, 0.0000000)
+]
+
+# z-plane poles (real, imaginary)
+z_plane_poles = [
+	(0.1370099, 0.8447676),
+	(0.1092149, 0.6074742),
+	(0.0931414, 0.4111430),
+	(0.0841441, 0.2384710),
+	(0.0800774, 0.0782001)
+]
+
 N = 2 * len(s_plane_poles)
 results = butterworth_analog_poles(N)
+for result in results:
+    print(result)
+results = butterworth_digital_poles(N)
+for result in results:
+    print(result)
+    

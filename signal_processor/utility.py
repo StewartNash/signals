@@ -98,7 +98,7 @@ def chebyshev(x, n):
     term = complex_multiply(two_x, t1)
     return complex_subtract(term, t2)
 
-def bilinear_transformation(value, is_s=True):
+def bilinear_transform(value, is_s=True):
     """
     Perform bilinear transformation:
       if is_s:  z = (1 + s) / (1 - s)
