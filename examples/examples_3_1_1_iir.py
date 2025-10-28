@@ -204,7 +204,7 @@ def butterworth_analog_poles(filter_order, passband_angular_frequency=0):
 		k = [i + 1 for i in range(int((N + 1) / 2))]
 	else: # Even
 		k = [i + 1 for i in range(int(N / 2))]
-	
+	print(k)
 	poles = [(-math.sin(math.pi * (2 * k_ - 1) / (2 * N)), math.cos(math.pi * ((2 * k_) - 1) / (2 * N))) for k_ in k]
 	#if passband_angular_frequency and not normalized:
 	if passband_angular_frequency:
@@ -226,7 +226,7 @@ def frequency_scaling_parameter(filter_family, fp, F, N=0, filter_type=FilterTyp
 	if filter_family is FilterFamily.ELLIPTIC:
 		alpha = (math.tan(math.pi * fp / f) * math.tan(math.pi * fs / F)) ** 0.5
 
-	assert alpha is not 0
+	assert alpha != 0
 	
 	return alpha
 

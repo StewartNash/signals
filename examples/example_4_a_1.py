@@ -1,5 +1,5 @@
 from signal_processor.infinite_impulse_response import compute_filter_order, lowpass_computations, FilterType, FilterFamily
-from signal_processor.infinite_impulse_response import butterworth_analog_poles, butterworth_digital_poles
+from signal_processor.infinite_impulse_response import butterworth_analog_poles, butterworth_digital_poles, frequency_scaling_parameter
 
 # ----------------------------------
 # Example 4.A.1: Butterworth Lowpass
@@ -49,10 +49,34 @@ z_plane_poles = [
 ]
 
 N = 2 * len(s_plane_poles)
+Ap = actual_passband_ripple
+alpha = frequency_scaling_parameter(FilterFamily.CHEBYSHEV,
+        sampling_frequency,
+        passband_frequency,
+        order=N,
+        passband_ripple=Ap,
+        stopband_frequency=stopband_frequency,
+        filter_type=FilterType.LOWPASS)
 results = butterworth_analog_poles(N)
+print("-------------")
+print("s-plane poles")
+print("-------------")
+for pole in s_plane_poles:
+    print(pole)
+print("------------------------")
+print("Calculated s-plane poles")
+print("------------------------")
 for result in results:
     print(result)
-results = butterworth_digital_poles(N)
+results = butterworth_digital_poles(N, frequency_scaling=alpha)
+print("-------------")
+print("Digital poles")
+print("-------------")
+for pole in z_plane_poles:
+    print(pole)
+print("------------------------")
+print("Calculated digital poles")
+print("------------------------")
 for result in results:
     print(result)
     
