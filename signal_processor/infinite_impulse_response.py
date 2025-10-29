@@ -2,6 +2,7 @@ import math
 import enum
 from signal_processor.utility import bilinear_transform
 from signal_processor.utility import to_complex, complex_add, complex_subtract, complex_multiply, complex_divide
+from signal_processor.utility import real_to_complex
 
 # filter_order			nk, NK
 # passband_frequency		fp
@@ -67,33 +68,53 @@ class FilterType(enum.Enum):
 	BANDPASS = 3
 	BANDSTOP = 4
 
+def prewarp_frequency(input_frequency, sampling_frequency):
+    # Prewarp digital frequency f (Hz) to analog frequency omega (rad/s)
+    f = input_frequency # Hz
+    Fs = sampling_frequency # Hz
+    
+    if f <= 0:
+        return 0.0
+    if Fs <= 0:
+        raise ValueError("sampling frequency Fs must be > 0")
+    omega = 2.0 * Fs * math.tan(math.pi * f / Fs) # (rad / s)
 
-def hplp_computations(maximum_passband_attenuation,
+    return 	omega
+
+def hplp_parameters(maximum_passband_attenuation,
 	minimum_stopband_attenuation,
 	passband_edge_frequency,
 	stopband_edge_frequency,
-	sampling_frequency):
+	sampling_frequency,
+	prewarp = True):
 	
 	Ap = maximum_passband_attenuation
 	As = minimum_stopband_attenuation
 	fp = passband_edge_frequency
 	fs = stopband_edge_frequency
-	omega_p = 2 * math.pi * fp
-	omega_s = 2 * math.pi * fs
-	parameter_epsilon = (10 ** (0.1 * Ap) - 1) ** 0.5
-	parameter_lambda = (10 ** (0.1 * As) - 1) ** 0.5
+	Fs = sampling_frequency
+	if prewarp:
+		omega_p = prewarp_frequency(fp, Fs)
+		omega_s = prewarp_frequency(fs, Fs)    
+	else:
+	    omega_p = 2 * math.pi * fp
+	    omega_s = 2 * math.pi * fs
+	#parameter_epsilon = (10 ** (0.1 * Ap) - 1) ** 0.5
+	#parameter_lambda = (10 ** (0.1 * As) - 1) ** 0.5
+	parameter_epsilon = math.sqrt(10**(0.1 * Ap) - 1.0)
+	parameter_lambda = math.sqrt(10**(0.1 * As) - 1.0)
 	parameter_A = parameter_lambda / parameter_epsilon
 	parameter_K0 = omega_p / omega_s
 	
 	return parameter_K0, parameter_A, parameter_epsilon, parameter_lambda
 	
-def highpass_computations(maximum_passband_attenuation,
+def highpass_parameters(maximum_passband_attenuation,
 	minimum_stopband_attenuation,
 	passband_edge_frequency,
 	stopband_edge_frequency,
 	sampling_frequency):
 	
-	parameter_K0, parameter_A, parameter_epsilon, parameter_lambda = hplp_computations(maximum_passband_attenuation,
+	parameter_K0, parameter_A, parameter_epsilon, parameter_lambda = hplp_parameters(maximum_passband_attenuation,
 	minimum_stopband_attenuation,
 	passband_edge_frequency,
 	stopband_edge_frequency,
@@ -106,13 +127,13 @@ def highpass_computations(maximum_passband_attenuation,
 	
 	return K, A
 	
-def lowpass_computations(maximum_passband_attenuation,
+def lowpass_parameters(maximum_passband_attenuation,
 	minimum_stopband_attenuation,
 	passband_edge_frequency,
 	stopband_edge_frequency,
 	sampling_frequency):
 	
-	parameter_K0, parameter_A, parameter_epsilon, parameter_lambda = hplp_computations(maximum_passband_attenuation,
+	parameter_K0, parameter_A, parameter_epsilon, parameter_lambda = hplp_parameters(maximum_passband_attenuation,
 	minimum_stopband_attenuation,
 	passband_edge_frequency,
 	stopband_edge_frequency,
@@ -125,7 +146,7 @@ def lowpass_computations(maximum_passband_attenuation,
 	
 	return K, A
 	
-def bpbs_computations(fp1, fp2, fs1, fs2, F):
+def bpbs_parameters(fp1, fp2, fs1, fs2, F):
 	KA = math.tan(math.pi * fp2 / F) - math.tan(math.pi * fp1 / F)
 	KB = math.tan(math.pi * fp1 / F) * math.tan(math.pi * fp2 / F)
 	KC = math.tan(math.pi * fs1 / F) * math.tan(math.pi * fs2 / F)
@@ -134,8 +155,8 @@ def bpbs_computations(fp1, fp2, fs1, fs2, F):
 	
 	return K1, K2, KA, KB, KC
 	
-def bandpass_computations(fp1, fp2, fs1, fs2, F):
-	K1, K2, KA, KB, KC = bpbs_computations(fp1, fp2, fs1, fs2, F)
+def bandpass_parameters(fp1, fp2, fs1, fs2, F):
+	K1, K2, KA, KB, KC = bpbs_parameters(fp1, fp2, fs1, fs2, F)
 
 	if KC >= KB:
 		parameter_K = K1
@@ -145,8 +166,8 @@ def bandpass_computations(fp1, fp2, fs1, fs2, F):
 	K = parameter_K	
 	return K
 
-def bandstop_computations(fp1, fp2, fs1, fs2, F):
-	K1, K2, KA, KB, KC = bpbs_computations(fp1, fp2, fs1, fs2, F)
+def bandstop_parameters(fp1, fp2, fs1, fs2, F):
+	K1, K2, KA, KB, KC = bpbs_parameters(fp1, fp2, fs1, fs2, F)
 
 	if KC >= KB:
 		parameter_K = 1 / K2
@@ -162,7 +183,7 @@ def compute_filter_order(parameter_K, parameter_A, filter_family):
 	elif filter_family == FilterFamily.CHEBYSHEV:
 		filter_order = math.ceil(math.acosh(parameter_A) / math.acosh(1 / parameter_K))
 	elif filter_family == FilterFamily.ELLIPTIC:
-		q, q0 = elliptic_computations(parameter_K)
+		q, q0 = elliptic_parameters(parameter_K)
 		filter_order = math.ceil(math.log(16 * A) / math.log(1 / q))
 	else:
 		filter_order = 0
@@ -170,7 +191,7 @@ def compute_filter_order(parameter_K, parameter_A, filter_family):
 	N = filter_order
 	return N
 
-def elliptic_computations(parameter_K):
+def elliptic_parameters(parameter_K):
 	K = parameter_K
 	parameter_q0 = (1 - (1 - K ** 2)) ** 0.25 / (2 * (1 + (1 - K ** 2) ** 0.25))
 	q0 = parameter_q0	
@@ -209,6 +230,19 @@ def butterworth_digital_poles(filter_order, frequency_scaling=0):
     poles = [bilinear_transform(pole) for pole in analog_poles]
 
     return poles
+    
+def butterworth_digital_poles_alternate(analog_poles, frequency_scaling):
+	alpha = frequency_scaling
+	digital_poles = [(0.0, 0.0)] * len(analog_poles)
+	for i in range(len(analog_poles)):
+		a = analog_poles[i][0] # Real component
+		b = analog_poles[i][1] # Imaginary component		
+		D = 1 + 2 * abs(a) * alpha + (a **2 + b ** 2) * alpha ** 2
+		c = (1 - (a ** 2 + b ** 2) * alpha ** 2) / D # Real component
+		d = (2 * b * alpha) / D # Imaginary component
+		digital_poles[i] = (c, d)
+		
+	return digital_poles    
     
 def butterworth_digital_zeros(filter_order):
     zeros = [(-1, 0) for x in range(filter_order)]
@@ -330,9 +364,9 @@ def frequency_scaling_parameter(filter_family,
         fs = stopband_frequency
         N = order        
         if filter_family == FilterFamily.BUTTERWORTH and filter_type == FilterType.LOWPASS:
-            alpha = (10 ** (0.1 * Ap) - 1) ** (- 1 / 2 * N) * math.tan(math.pi * fp / F)
+            alpha = (10 ** (0.1 * Ap) - 1) ** (- 1 / (2 * N)) * math.tan(math.pi * fp / F)
         elif filter_family == FilterFamily.BUTTERWORTH and filter_type == FilterType.HIGHPASS:
-            alpha = (10 ** (0.1 * Ap) - 1) ** (1 / 2 * N) * math.tan(math.pi * fp / F)            
+            alpha = (10 ** (0.1 * Ap) - 1) ** (1 / (2 * N)) * math.tan(math.pi * fp / F)            
         elif filter_family == FilterFamily.CHEBYSHEV:
             alpha = math.tan(math.pi * fp / F)
         elif filter_family == FilterFamily.ELLIPTIC:
@@ -359,4 +393,21 @@ def frequency_transformation(values, filter_type, upper_passband_frequency, lowe
 
 def analog_frequency_transformation(values, filter_type, upper_passband_frequency, lower_passband_frequency=0):
     return frequency_transformation(values, filter_type, upper_passband_frequency, lower_passband_frequency)
+    
+def iir_filter(samples, denominator_coefficients, numerator_coefficients):
+	x = real_to_complex(samples)
+	y = [(0.0, 0,0)] * len(x)
+	a = denominator_coefficients
+	b = numerator_coefficients
+	for i in range(len(x)):
+		accumulator = (0.0, 0.0)
+		for k in range(len(b)): # Feedforward
+			if i - k >= 0:
+				accumulator = complex_add(accumulator, complex_multiply(b[k], x[i - k]))
+		for k in range(1, len(a)): # Feedback
+			if i - k >= 0:
+				accumulator = complex_subtract(accumulator, complex_multiply(a[k], y[i - k]))
+		y[i] = accumulator
+		
+	return y
 
