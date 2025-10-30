@@ -161,3 +161,4 @@ ex_5_6_constants = {"fp1": fp1_ex_5_6,
 	"fir_coefficients": fir_coefficients_ex_5_6,
 	"frequency_response": frequency_response_ex_5_6
 }
+
