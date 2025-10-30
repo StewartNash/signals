@@ -100,7 +100,7 @@ frequency_response = [
 	[480.000, -0.023],
 	[500.000, -0.173],
 	[530.000, -3.574],
-	[560.000, -10.327,
+	[560.000, -10.327],
 	[590.000, -17.009],
 	[620.000, -23.055],
 	[650.000, -28.616],
@@ -124,3 +124,20 @@ frequency_response = [
 	[1190.000, -90.000],
 	[1220.000, -90.000]
 ]
+
+ex_4_a_2_constants = {"fp1": fp1,
+	"fp2": fp2,
+	"Ap": ripple_passband,
+	"fs1": fs1,
+	"fs2": fs2,
+	"As": ripple_stopband,
+	"F": F,
+	"s_plane_zeros": s_plane_zeros,
+	"s_plane_poles": s_plane_poles,
+	"z_plane_zeros": z_plane_zeros,
+	"z_plane_poles": z_plane_poles,
+	"section_coefficients": section_coefficients,
+	"normalizing_factors": normalizing_factors,
+	"frequency_response": frequency_response
+}
+

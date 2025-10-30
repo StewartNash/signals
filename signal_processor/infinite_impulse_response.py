@@ -272,6 +272,15 @@ def chebyshev_analog_poles(filter_order, parameter_epsilon, passband_angular_fre
 	
 	return poles
 
+def chebyshev_digital_poles(filter_order, frequency_scaling=0):
+    analog_poles = chebyshev_analog_poles(filter_order)
+    if frequency_scaling:
+        alpha = frequency_scaling
+        analog_poles = [(alpha * pole[0], alpha * pole[1]) for pole in analog_poles]
+    poles = [bilinear_transform(pole) for pole in analog_poles]
+
+    return poles
+
 def omega_k(q, k, N, M=25):
 	if k % 2: # Odd
 		u = k
