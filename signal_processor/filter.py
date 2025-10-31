@@ -1,13 +1,14 @@
+import enum
 # IIR Filter Design Procedure
 # 1. Enter filter specifications
-# 	a. Filter type: LP, HP, BP or BS
-# 	b. Filter parameters
-# 		i. LP, HP: Ap, As, fp, fs, F
-# 			A. LP: (fp < fs), (F > 2*fs)
-# 			B. HP: (fp > fs), (F > 2*fp)
-# 		ii. BP, BS: Ap, As, fp1, fp2, fs1, fs2, F/2
-# 			A. BP: (fs1 < fp1 < fp2 < fs2), (F > 2*fs2)
-# 			B. BS: (fp1 < fs1 < fs2 < fp2), (F > 2*fp2) 
+#	a. Filter type: LP, HP, BP or BS
+#	b. Filter parameters
+#		i. LP, HP: Ap, As, fp, fs, F
+#			A. LP: (fp < fs), (F > 2*fs)
+#			B. HP: (fp > fs), (F > 2*fp)
+#		ii. BP, BS: Ap, As, fp1, fp2, fs1, fs2, F/2
+#			A. BP: (fs1 < fp1 < fp2 < fs2), (F > 2*fs2)
+#			B. BS: (fp1 < fs1 < fs2 < fp2), (F > 2*fp2) 
 # 2. Compute filter order, N (table 4.4)
 # 3. Compute analog LP zeros
 # 4. Compute analog LP poles
@@ -70,27 +71,44 @@
 # sampling_rate			F
 # nyquist_frequency		F/2
 
+
+class FilterFamily(enum.Enum):
+	BESSEL = 1
+	BUTTERWORTH = 2
+	CHEBYSHEV = 3
+	ELLIPTIC = 4	
+	CHEBYSHEV_1 = 5
+	CHEBYSHEV_2 = 6
+
+
+class FilterType(enum.Enum):
+	LOWPASS = 1
+	HIGHPASS = 2
+	BANDPASS = 3
+	BANDSTOP = 4
+
+
 class Filter:
-    def __init__(self):
-        self.order = None
-        self.type = None
-        self.family = None
-        self.passband_frequency_low = None
-        self.passband_frequency_high = None
-        self.stopband_frequency_low = None
-        self.stopband_frequency_high = None
-        
-    def get_analog_poles(self):
-        pass
-        
-    def get_digital_poles(self):
-        pass
-    
-    def get_parameters(self):
-        pass
-        
-    def get_parameter_descriptions(self):
-        pass
-        
-    def set_parameters(self, input_parameters):
-        pass
+	def __init__(self):
+		self.order = None
+		self.type = None
+		self.family = None
+		self.passband_frequency_low = None
+		self.passband_frequency_high = None
+		self.stopband_frequency_low = None
+		self.stopband_frequency_high = None
+		
+	def get_analog_poles(self):
+		pass
+		
+	def get_digital_poles(self):
+		pass
+	
+	def get_parameters(self):
+		pass
+		
+	def get_parameter_descriptions(self):
+		pass
+		
+	def set_parameters(self, input_parameters):
+		pass

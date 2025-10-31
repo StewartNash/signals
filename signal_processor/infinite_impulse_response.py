@@ -1,5 +1,5 @@
 import math
-import enum
+from signal_processor.filter import FilterType, FilterFamily
 from signal_processor.utility import bilinear_transform
 from signal_processor.utility import to_complex, complex_add, complex_subtract, complex_multiply, complex_divide
 from signal_processor.utility import real_to_complex
@@ -54,19 +54,6 @@ from signal_processor.utility import real_to_complex
 # transition_bandwidth		fp <= f <= fs
 # sampling_rate			F
 # nyquist_frequency		F/2
-
-
-class FilterFamily(enum.Enum):
-	BUTTERWORTH = 1
-	CHEBYSHEV = 2
-	ELLIPTIC = 3
-
-
-class FilterType(enum.Enum):
-	LOWPASS = 1
-	HIGHPASS = 2
-	BANDPASS = 3
-	BANDSTOP = 4
 
 def prewarp_frequency(input_frequency, sampling_frequency):
     # Prewarp digital frequency f (Hz) to analog frequency omega (rad/s)

@@ -1,6 +1,6 @@
 import math
 import numpy as np
-import enum
+from signal_processor.filter import FilterType, FilterFamily
 
 # filter_order			nk, NK
 # passband_frequency		fp
@@ -40,13 +40,6 @@ import enum
 # impulse_response		H
 # sinc_function			fnsx, FNSX
 # argument			ARG
-
-
-class FilterType(enum.Enum):
-	LOWPASS = 1
-	HIGHPASS = 2
-	BANDPASS = 3
-	BANDSTOP = 4
 
 def kaiser_coefficients(filter_order, minimum_stopband_attenuation):
 	n = filter_order
