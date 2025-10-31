@@ -4,7 +4,7 @@ from signal_processor.utility import bilinear_transform
 from signal_processor.utility import to_complex, complex_add, complex_subtract, complex_multiply, complex_divide
 from signal_processor.utility import real_to_complex
 
-# filter_order			nk, NK
+# filter_order			    nk, NK
 # passband_frequency		fp
 # passband_frequency_low	fp1, FP1
 # passband_frequency_high	fp2, FP2
@@ -15,7 +15,7 @@ from signal_processor.utility import real_to_complex
 # transition_bandwidth_low	bt1
 # transition_bandwidth_high	bt2
 # transition_bandwidth		bt
-# delta				_del
+# delta				        _del
 # delta_passband (ripple)	d1
 # delta_stopband (ripple)	d2
 # actual_passband_ripple	aap
@@ -23,25 +23,25 @@ from signal_processor.utility import real_to_complex
 # actual_stopband_attenuation	actual_minimum_stopband_attenuation
 # minimum_stopband_attenuation	specified_minimum_stopband_attenuation
 # minimum_stopband_attenuation	aa
-# parameter_d			pard
-# alpha				alp, ALP
+# parameter_d			    pard
+# alpha				        alp, ALP
 
 # actual_passband_ripple	aa (CORRECTION)
 # minimum_stopband_attenuation	aap (CORRECTION)
-# kaiser_coeffs			wk, WK
+# kaiser_coeffs			    wk, WK
 # mod_bessel_fk_alpha		modified_bessel_first_kind_alpha
 # mod_bessel_fk_beta		modified_bessel_first_kind_beta
 # mod_bessel_fk_alpha		IOALP
 # mod_bessel_fk_beta		IOBE
 # beta				BE
 #				KFAC (factorial)
-# cutoff_frequency		wc, WC
+# cutoff_frequency		    wc, WC
 # cutoff_frequency_low		wc1, WC1
 # cutoff_frequency_high		wc2, WC2
 # initial_impulse_response	H1
-# impulse_response		H
-# sinc_function			fnsx, FNSX
-# argument			ARG
+# impulse_response		    H
+# sinc_function			    fnsx, FNSX
+# argument			        ARG
 
 # LOWPASS			LP
 # HIGHPASS			HP

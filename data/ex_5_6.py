@@ -147,7 +147,8 @@ frequency_response_ex_5_6 = [
 	(0.495, -41.53972527)
 ]
 
-ex_5_6_constants = {"fp1": fp1_ex_5_6,
+ex_5_6_constants = {
+    "fp1": fp1_ex_5_6,
 	"fp2": fp2_ex_5_6,
 	"Ap": Ap_ex_5_6,
 	"fs1": fs1_ex_5_6,

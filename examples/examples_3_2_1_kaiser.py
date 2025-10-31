@@ -1,7 +1,8 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-from signal_processor.finite_impulse_response import kaiser_filter_order, kaiser_coefficients, kaiser_lowpass, magnitude_response, FilterType
+from signal_processor.finite_impulse_response import kaiser_filter_order, kaiser_coefficients, kaiser_lowpass, magnitude_response
+from signal_processor.filter import FilterType
 
 # -------------------------------
 # Example 5.4: Lowpass FIR Filter

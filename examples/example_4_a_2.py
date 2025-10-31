@@ -2,13 +2,12 @@ from signal_processor.infinite_impulse_response import (
     compute_filter_order,
     hplp_parameters,
     lowpass_parameters,
-    FilterType,
-    FilterFamily,
     chebyshev_analog_poles,
     chebyshev_digital_poles,
     frequency_scaling_parameter,
     iir_filter
     )
+from signal_processor.filter import FilterType, FilterFamily
 from signal_processor.utility import polynomial_coefficients
 import numpy as np
 

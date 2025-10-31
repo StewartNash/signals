@@ -125,7 +125,8 @@ frequency_response = [
 	[1220.000, -90.000]
 ]
 
-ex_4_a_2_constants = {"fp1": fp1,
+ex_4_a_2_constants = {
+    "fp1": fp1,
 	"fp2": fp2,
 	"Ap": ripple_passband,
 	"fs1": fs1,
