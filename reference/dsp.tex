@@ -1,0 +1,525 @@
+\documentclass[11pt]{book}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{multirow}
+
+\newtheoremstyle{example} % Style name
+	{10pt} % Space above
+	{10pt} % Space below
+	{\normalfont} % Body font
+	{} % Header font
+	{\bfseries} % Header font
+	{.} % Separator
+	{10pt} % Space after header
+	{} % Header text
+\theoremstyle{example}
+\newtheorem{example}{Example}[section]
+\newtheorem{definition}{Definition}[section]
+
+\begin{document}
+
+\title{Digital Signal Processing}
+\author{Edited by Stewart Nash}
+\date{2026}
+
+\frontmatter
+
+\maketitle
+
+\chapter*{Preface}
+This material is extracted from ``Digital Signal Processing: A System Design Approach'', a text which was used heavily, if not exclusively, to create this library. The authors of the aforementioned text are David J. DeFatta, Joseph G. Lucas and William S. Hodgkiss. It will be useful to only extract the pertinent material from the text and replace the Fortran examples with examples in Python -- a modern programming language for scientific computing -- if the programming examples are used at all: the library speaks for itself as far as coding is concerned. It may be better to omit references altogether or perhaps just refer to specific parts of the library (if time allows).  
+
+\tableofcontents
+
+\mainmatter
+
+\chapter{Introduction to Digital Signal Processing}
+
+\chapter[Discrete Signals and Linear Systems]{Discrete-Time Signal Analysis and Linear Systems}
+
+\chapter{The Z-Transform}
+
+\chapter[IIR Digital Filter Design]{Infinite Impulse Response Digital Filter Design}
+
+An infinite impulse response (IIR) filter is characterized by an impulse response of infinite duration. We will discuss several methods of digital IIR filter design:
+\begin{itemize}
+	\item Bilinear transformation
+	\item Pole-zero placement
+	\item Complex coefficients
+	\item Computer aided design (CAD)
+\end{itemize}
+
+We will focus on bilinear transformation and treat the other methods only in passing. We will first discuss the bilinear transformation and then describe the filter design equations going from analog to digital filters.
+
+\section{Bilinear Transformation}
+
+One IIR digital filter (DF) design method is the bilinear transformation (BT) of classic analog filters. BT uniquely maps the entire left half of the $s$-plane into the interior of the unit circle in the $z$-plane. The design procedure is as follows:
+\begin{enumerate}
+	\item Design formulas -- generate analog poles and zeros of Butterworth, Chebyshev, and elliptic lowpass filters
+	\item Frequency band transformation formulas -- converts analog lowpass filters into analog highpass, bandpass, and bandstop filters
+	\item Bilinear transformation -- maps poles in the $s$-plane to poles in the $z$-plane
+\end{enumerate}
+
+For the linear network to be causal and stable (1) the transfer function should be a rational function of $s$ with real coefficients, (2) the poles of the analog filter must lie in the left half of the $s$-plane, and (3) the degree of the numerator (polynomial) must be less than or equal to the degree of the denominator (polynomial).
+
+\section{Design Equations}
+
+We refer to $\omega_p$ as the passband frequency and $\omega_s$ as the stopband frequency. In some texts, the passband frequency is called the cutoff frequency and denoted $\omega_0$. The transition band is between $\omega_p$ and $\omega_s$. Please note that the aforementioned frequencies can also be given as $f_p$ and $f_s$, respectively, where $omega=2{\pi}f$ is the angular frequency. 
+
+\subsection{Butterworth Filters}
+
+(By definition) Butterworth filters have a magnitude response that is maximally flat in the passband. The magnitude squared function for an $n$-th order analog Butterworth filter is
+\begin{equation}
+	|H_n(j\omega)|^2=\frac{1}{1+\varepsilon^2\left(\frac{\omega}{\omega_p}\right)^{2n}}
+\end{equation}
+
+\subsection{Chebyshev Filters}
+(By definition) A Chebyshev filter has a magnitude response that is equiripple in the passband and monotonic in the stopband for type 1 or monotonic in the passband and equiriple in the stopband for type 2. Regarding the analog filter, the analytic form for the squared magnitude function (for an  $n$-th order filter) is
+\begin{equation}
+	|H_n(j)|^2=\frac{1}{1+\varepsilon^2T_n^2\left(\frac{\omega}{\omega_p}\right)}
+\end{equation}
+where $T_n$ is the Chebyshev polynomial of the $n$-th order.
+
+\subsection{Elliptic Filters}
+(By definition) An elliptic filter has a magnitude response that is equiripple in both the passband and stopband. The magnitude response of the the filter is
+\begin{equation}
+	|H_n(j\omega)|^2=\frac{1}{1+\varepsilon^2R_n^2(\omega)}
+\end{equation}
+where $R_n$ is the $n$-th order elliptic rational function (also known as the Chebyshev rational function). (Elliptic filters are optimum in the sense that for a given order and ripple specification it achieves the fastest transition between the passband and stopband - the narrowest transition bandwidth.) 
+
+\section{Pole-Zero Placement}
+
+This design method involves direct placement of the poles and zeros in the $z$-plane to meet an arbitrary frequency repsonse specification.
+
+\section{Complex Coefficients}
+
+\section{CAD}
+
+This is a practical method for designing IIR digital filters with aribitrary, prescribed magnitude characteristics.
+
+\chapter[FIR Digital Filter Design]{Finite Impulse Response Digital Filter Design}
+
+A finite impule response (FIR) filter is characterized by an impulse response of finite duration. An FIR filter may also be called a nonrecursive, moving average, transveral or tapped delay line filter. Let us consider the design techniques for FIR digital filters. These filters can be efficiently implemented in the frequency domain, but we will consider the time domain implementation of the FIR filter. These filters are usually solving by using Fourier series or numerical analysis techniques.
+
+A disadvantage of FIR filters is that they must be higher order to achieve a specified magnitude response (as compared to IIR filters). Some characteristics (advantages) of FIR filters are
+\begin{itemize}
+	\item FIR filters can be designed with exactly linear phase
+	\item FIR filters realized nonrecursively are inherently stable
+	\item Quantization noise can be negligible for nonrecursive realizations
+	\item Coefficient accuracy problems inherent in sharp cutoff can be less severe
+	\item FIR filters canbe efficiently implemented in multirate DSP systems
+\end{itemize}
+
+The transfer function of an FIR causal filter is
+\begin{equation}
+	H(z)=\sum_{n=0}^{N-1}{h(n)z^{-n}}
+\end{equation}
+where $h(n)$ is the impulse response of the filter. The difference equation is obtained by taking the inverse Z-transform
+\begin{equation}
+	y(iT)=\sum_{n=0}^{N-1}{h(n)x(iT-nT)}
+\end{equation}
+which turns out to be a convolution summation.
+The Fourier transform of $h(n)$ is
+\begin{equation}
+	y(iT)=\sum_{n=0}^{N-1}{h(n)e^{-j{\omega}nT}}=|H(e^{j{\omega}T})|e^{j\theta(\omega)}
+\end{equation}
+which give the magnitude and phase response
+\begin{align}
+	M(\omega)&=|H(e^{j{\omega}T})|\\
+	\theta(\omega)&=\tan^{-1}{\frac{-\mathrm{Im}\,H(e^{j{\omega}T})}{\mathrm{Re}\,H(e^{j{\omega}T})}}
+\end{align}
+The phase delay and group (time) delay are
+\begin{align}
+	\tau_p&=-\frac{\theta(\omega)}{\omega}\\
+	\tau_g&=-\frac{d\theta(\omega)}{d\omega}
+\end{align}
+In linear phase (aka constant time delay) filters, $\tau_p$ and $\tau_g$ are constant. By definition, we have
+\begin{equation}
+	\theta(\omega)=-\tau\omega\quad-\pi<\omega<\pi
+\end{equation}
+We can show that FIR filters will have constant phase and group delays if
+\begin{align}
+	\tau&=\frac{(N-1)T}{2}\\
+	h(n)&=h[(N-1-n)]\quad{0<n<N-1}
+\end{align}
+The symmetry conditions of the impulse response results in a transfer function that is a mirror-image polynomial.
+\begin{center}
+	\begin{tabular}{|l|l|l|}
+		\multicolumn{3}{l}{Frequency response of constant-delay nonrecursive filters}\\
+		\hline
+		$h(nT)$ & $N$ & $H(e^{j{\omega}T})$\\
+		\hline
+		\multirow{2}{*}{Symmetrical} & Odd & $e^{-j\omega(N-1)T/2}\sum_{k=0}^{(N-1)/2}{a_k\cos{\omega{kT}}}$\\
+		\cline{2-3}
+		& Even & $e^{-j\omega(N-1)T/2}\sum_{k=1}^{N/2}{b_k\cos{[\omega(k-1/2)T]}}$\\
+		\hline
+		\multirow{2}{*}{Antisymmetrical} & Odd & $e^{-j[\omega(N-1)T/2-\pi/2]}\sum_{k=1}^{(N-1)/2}{a_k\sin{\omega{kT}}}$\\
+		\cline{2-3}
+		& Even & $e^{-j[\omega(N-1)T/2-\pi/2]}\sum_{k=1}^{N/2}{b_k\sin{[\omega(k-1/2)T]}}$\\
+		\hline
+	\end{tabular}
+\end{center}
+\begin{center}
+	\begin{tabular}{|l|}
+		\hline
+		$a_0=h\left[\frac{(N-1)T}{2}\right]$\\
+		$a_k=2h\left[\left(\frac{N-1}{2}-k\right)T\right]$\\
+		$b_k=2h\left[\left(\frac{N}{2}-k\right)T\right]$\\
+		\hline
+	\end{tabular}
+\end{center}
+
+\section{Fourier Series Design Method}
+
+The desired frequency response of an FIR digital filter can be represented by the Fourier series
+\begin{equation}
+	H(e^{j2{\pi}fT})=\sum_{n=-\infty}^\infty{h_d(n)e^{-j2{\pi}fnT}}
+\end{equation}
+The Fourier coefficients $h_d(n)$ are the desired impulse response sequence of the filter determined from
+\begin{equation}
+	h_d(n)=\frac{1}{F}\int_{-F/2}^{F/2}{H(e^{j2{\pi}fT})e^{j2{\pi}fnT}\,df}
+\end{equation}
+We substitute $e^{j{\omega}T}=z$ to obtain the transfer function
+\begin{equation}
+	H(z)=\sum_{n=-\infty}^\infty{h_d(n)z^{-n}}
+\end{equation}
+For $N$-odd we obtain
+\begin{equation}
+	\begin{split}
+		H(z)&=z^{-(N-1)/2}\sum_{n=-(N-1)/2}^{(N-1)/2}{h_d(n)z^{-n}}\\
+		&=z^{-(N-1)/2}\left[h_d(0)+\sum_{n=1}^{(N-1)/2}{h_d(n)(z^n+z^{-n})}\right]
+	\end{split}
+\end{equation}
+A technique for the design of FIR digital fitlers is to multiply the desired impulse response $h_d(n)$ by a window function $a(n)$. (Window functions are a class of time-domain functions.)
+\begin{equation}
+	h(n)=h_d(n)a(n)
+\end{equation}
+We thus have
+\begin{equation}
+	H_A(e^{j{\omega}T})=\frac{1}{2{\pi}F}\int_{0}^{2{\pi}F}{H(e^{j{\omega}T})A(e^{j(\omega-\Omega)T}\,d\Omega}
+\end{equation}
+
+\subsection{Rectangular Window Function}
+The rectangular window function is
+\begin{equation}
+	a_R(n)=
+	\begin{cases}
+		1 & \mathrm{for}\,|n|\leq\frac{N-1}{2}\\
+		0 & \mathrm{otherwise}
+	\end{cases}
+\end{equation}
+Its Fourier transform is
+\begin{equation}
+	\begin{split}
+		A_R(e^{j{\omega}T})&=\sum_{n=-(N-1)/2}^{(N-1)/2}{e^{-j{\omega}nT}}\\
+		&=\frac{\sin{({\omega}NT/2)}}{\sin{({\omega}T/2)}}
+	\end{split}
+\end{equation}
+The causal rectangular window is
+\begin{equation}
+	\begin{split}
+		A_R(e^{j{\omega}NT})&=\sum_{n=0}^{N-1}{e^{-j{\omega}nT}}\\
+		&=e^{-j\omega(N-1)T/2}\frac{\sin{({\omega}NT/2)}}{\sin{({\omega}T/2)}}
+	\end{split}
+\end{equation}
+
+\subsection{Hamming Window Function}
+The Hamming window function is
+\begin{equation}
+	a_H(n)=
+	\begin{cases}
+		0.54+0.46\cos{\frac{2{\pi}n}{N-1}} & \mathrm{for}\,|n|\leq\frac{N-1}{2}\\
+		0 & \mathrm{otherwise}
+	\end{cases}
+\end{equation}
+Note that
+\begin{equation}
+	a_H(n)=a_R(n)\left[0.54+0.46\cos{\frac{2{\pi}n}{N-1}}\right]
+\end{equation}
+\begin{equation}
+	\begin{split}
+		A_H(e^{j{\omega}T})&=0.54\frac{\sin{({\omega}NT/2)}}{\sin{({\omega}T/2)}}\\
+		&+0.46\frac{\sin{[{\omega}NT/2-N\pi/(N-1)]}}{\sin{[{\omega}T/2-\pi/(N-1)]}}\\
+		&+0.46\frac{\sin{[{\omega}NT/2+N\pi/(N-1)]}}{\sin{[{\omega}T/2+\pi/(N-1)]}}
+	\end{split}
+\end{equation}
+
+\subsection{Blackman Window Function}
+The noncausal Blackman window function is given by
+\begin{equation}
+	a_B(n)=
+	\begin{cases}
+		0.42+0.5\cos{\frac{2{\pi}n}{N-1}}+0.08\cos{\frac{4{\pi}n}{N-1}}, & \mathrm{for}\,|n|<\frac{N-1}{2}\\
+		0 & \mathrm{otherwise}
+	\end{cases}
+\end{equation}
+
+\subsection{Kaiser Window Function}
+The Kaiser window function uses functions which approximate the prolate spheroidal functions (which are optimal in a certain sense). The functions given by Kaiser are in terms of the zero-order modified Bessel functions of the first kind, $I_0(x)$. The formula for the Kaiser function is
+\begin{equation}
+	a_K(n)=
+	\begin{cases}
+		\frac{I_0(\beta)}{I_0(\alpha)} & \mathrm{for}\,|n|\leq\frac{N-1}{2}\\
+		0 & \mathrm{otherwise}
+	\end{cases}
+\end{equation}
+where $\alpha$ is an independent variable empirically determined by Kaiser and the parameter $\beta$ is given by
+\begin{equation}
+	\beta=\alpha\left[1-\left(\frac{2n}{N-1}\right)\right]^{0.5}
+\end{equation}
+The modified Bessel function of the first kind is
+\begin{equation}
+	I_0(x)=1+\sum_{n=1}^\infty{\left[\frac{1}{k!}\left(\frac{x}{2}\right)^k\right]^2}
+\end{equation}
+The spectrum of the Kaiser window is given by
+\begin{equation}
+	\sum_{(N-1)/2}^{-(N-1)/2}{a_K(n)e^{-j{\omega}nT}}=a_k(0)+2\sum_{n=1}^{(N-1)/2}{a_K(n)\cos{{\omega}nT}}
+\end{equation}
+The actual passband peak-to-peak ripple $A_p$ is
+\begin{equation}
+	A_p=20\log_{10}{\frac{1+\delta_p}{1-\delta_p}}
+\end{equation}
+The minimum stopband attenuation $A_s$ is
+\begin{equation}
+	A_s=-20\log_{10}{\delta_s}
+\end{equation}
+The transition bandwidth is
+\begin{equation}
+	{\Delta}F=f_s-f_p
+\end{equation}
+The specified passband ripple is $A_p'$.
+The minimum stopband attenuation is $A_s'$.
+We have
+\begin{align}
+	A_p&{\leq}A_p'\\
+	A_s&{\geq}A_s'
+\end{align}
+
+\subsection{FIR Filter Design with the Kaiser Window Function}
+
+This section will describe how to design an FIR filter using the Kaiser window function. First, we must obtain the design specifications:
+\begin{enumerate}
+	\item Filter type: LP, HP, BP, BS
+	\item Critical passband and stopband frequencies in hertz
+	\begin{itemize}
+		\item LP/HP: $f_p$ and $f_s$
+		\item BP/BS: $f_{p1}$, $f_{p2}$, $f_{s1}$, and $f_{s2}$
+	\end{itemize}
+	\item Passband ripple and minimum stopband attenuation in positive decibels: $A_p'$ and $A_s'$
+	\item Sampling frequency in hertz: F
+	\item Filter order ($N$)-odd	 
+\end{enumerate}
+
+The design procedure is as follows:
+\begin{enumerate}
+	\item Determine $\delta$ (the actual design parameter)
+		\begin{align}
+			\delta&=\min(\delta_p,\delta_s)\\
+			\delta_s&=10^{-0.05A_s'}\\
+			\delta_p&=\frac{10^{0.05A_p'}-1}{10^{0.05A_p'}+1}
+		\end{align}
+	\item Calculate $A_s$
+	\item Determine the parameter $\alpha$ from the empirical design equation
+		\begin{equation}
+			\alpha=
+			\begin{cases}
+				0 & \mathrm{for}\,A_s{\leq}21\\
+				0.5842(A_s-21)^{0.4}+0.07886(A_s-21) & \mathrm{for}\,21<A_s{\leq}50\\
+				0.1102(A_s-8.7) & \mathrm{for}\,A_s>50
+			\end{cases}
+		\end{equation}
+	\item Determine the parameter $D$ from the empirical design equation
+		\begin{equation}
+			D=
+			\begin{cases}
+				0.9222 & \mathrm{for}\,A_s{\leq}21\\
+				\frac{A_s-7.95}{14.36} & \mathrm{for}\,A_s>21
+			\end{cases}
+		\end{equation}
+	\item Calculate the filter order for the lowest odd value of $N$
+		\begin{equation}
+			N\geq\frac{FD}{{\Delta}F}+1
+		\end{equation}
+	\item COmpute the modified impulse response
+		\begin{equation}
+			h(n)=a_k(n)h_d(n)\quad\mathrm{for}\,|n|\leq\frac{N-1}{2}
+		\end{equation}
+	\item The transfer function is
+		\begin{equation}
+			H(z)=z^{-(N-1)/2}\left[h(0)+2\sum_{n=0}^{(N-1)/2}{h(n)(z^n+z^{-n})}\right]
+		\end{equation}
+		\begin{align}
+			h(0)&=a_K(0)h_d(0)\\
+			h(n)&=a_K(n)h_d(n)
+		\end{align}
+		The magnitude response is
+		\begin{equation}
+			M(\omega)=h(0)+2\sum_{n=0}^{(N-1)/2}{h(n)\cos{2{\pi}fnT}}
+		\end{equation}
+\end{enumerate}
+
+The FIR filter design equations are as follows:
+\begin{itemize}
+	\item Lowpass FIR filter
+		\begin{align}
+			h_d(n)&=
+			\begin{cases}
+				\left(\frac{2f_c}{F}\right)\frac{\sin{2{\pi}nf_c/F}}{2{\pi}nf_c/F} & \mathrm{for}\,n>0\\
+				\frac{2f_c}{F} & \mathrm{for}\,n=0
+			\end{cases}\\
+			f_c&=0.5(f_p+f_s)\\
+			{\Delta}F&=f_s-f_p
+		\end{align}
+	\item Bandpass FIR filter
+		\begin{align}
+			h_d(n)&=
+			\begin{cases}
+				-\left(\frac{2f_c}{F}\right)\frac{\sin{2{\pi}nf_c/F}}{2{\pi}nf_c/F} & \mathrm{for}\,n>0\\
+				1-2f_c/F & \mathrm{for}\,n=0
+			\end{cases}\\
+			f_c&=0.5(f_p+f_s)\\
+			{\Delta}F&=f_p-f_s
+		\end{align}
+	\item Bandpass FIR filter
+		\begin{align}
+			h_d(n)&=
+			\begin{cases}
+				\frac{1}{n\pi}[\sin{(2{\pi}nf_{c2}/F)}-\sin{(2{\pi}nf_{c1}/F)}] & \mathrm{for}\,n>0\\
+				\frac{2}{F}(f_{c2}-f_{c1}) & \mathrm{for}\,n=0
+			\end{cases}\\
+			f_{c1}&=f_{p1}-\frac{{\Delta}F}{2}\\
+			f_{c2}&=f_{p2}+\frac{{\Delta}F}{2}\\
+			{\Delta}F_1&=f_{p1}-f_{s1}\\
+			{\Delta}F_h&=f_{s2}-f_{p2}\\
+			{\Delta}F&=\min{[{\Delta}F_1,{\Delta}F_h]}
+		\end{align}
+	\item Bandstop FIR filter
+		\begin{align}
+			h_d(n)&=
+			\begin{cases}
+				\frac{1}{n\pi}[\sin{(2{\pi}nf_{c1}/F)}-\sin{(2{\pi}nf_{c2}/F)}] & \mathrm{for}\,n>0\\
+				\frac{2}{F}(f_{c1}-f_{c2})+1 & \mathrm{for}\,n=0
+			\end{cases}\\
+			f_{c1}&=f_{p1}+\frac{{\Delta}F}{2}\\
+			f_{c2}&=f_{p2}-\frac{{\Delta}F}{2}\\
+			{\Delta}F_1&=f_{s1}-f_{p1}\\
+			{\Delta}F_h&=f_{p2}-f_{s2}\\
+			{\Delta}F&=\min{[{\Delta}F_1,{\Delta}F_h]}
+		\end{align}
+\end{itemize}
+
+\section{Examples}
+
+\begin{example}
+	Design an FIR lowpass digital filter with the following specifications
+\end{example}
+
+\begin{example}
+	Design an FIR bandpass filter with the following specifications
+\end{example}
+
+\chapter[DFT and FFT Algorithms]{The Discrete Fourier Transform and Fast Fourier Transform Algorithms}
+
+\chapter{Multirate Digital Signal Processing}
+
+\chapter[Response of Linear Systems]{Response of Linear Systems to Discrete-Time Random Processes, Power Spectrum Estimation, and Detection of Signals in Noise}
+
+\section{Random Processes}
+
+In this section we look at the effect of a random process (RP) on a a system. A wide-sense stationary (WSS) process only requires that the first and second moments are not function of time, and that the autocorrelation function depends only on the time difference. An ergodic random process requires that any statistic calculated by averaging over all members of an ergodic ensemble at a a fixed time can be calculated by averaging over all time on a single representative member of the ensemble; that is, time averages equal ensemble averages.
+
+Let the autocorrelation functions (ACF) of the input and output processes be given by $\phi_{xx}(m)$ and $\phi_{yy}(m)$, or
+\begin{align}
+	\phi_{xx}(m)&=E[x(n)x(n+m)]=\lim_{x\to\infty}{\frac{1}{2N+1}\sum_{n=-N}^N{x(n)x(n+m)}}\\
+	\phi_{yy}(m)&=E[y(n)y(n+m)]=\lim_{x\to\infty}{\frac{1}{2N+1}\sum_{n=-N}^N{y(n)y(n+m)}}
+\end{align}
+If the process is assumed to be WSS, the ACF depends only on the time difference; in that case, the system output process ACF is given by
+\begin{equation}
+	\phi_{yy}(m)=\sum_{i=-\infty}^\infty\sum_{j=-\infty}^\infty{h(i)h(i+j)\phi_{xx}(m-j)}
+\end{equation}
+The CCF of two discrete-time random proceses $x(n)$ and $y(n)$ that are jointly WSS RPs is
+\begin{equation}
+	\phi_{xy}(m)=E[x(n)y(n+m)]
+\end{equation}
+The CCF of the input $x(n)$ and response $y(n)$ of a discrete-time linear system can then be given as
+\begin{equation}
+	\phi_{xy}(m)=\sum_{j=-\infty}^\infty{h(j)\phi_{xx}(m-j)}
+\end{equation}
+The autocovariance (ACVF) and cross-covariance (CCVF) functoins of two stationary RP $x(n)$ and $y(n)$ are given by
+\begin{align}
+	\gamma_{xx}(m)&=E\{[x(n)-m_x][(x(n+m)+m_x)]\}=\phi_{xx}(m)-m^2_x\\
+	\gamma_{xy}(m)&=E\{[x(n)-m_x][(y(n+m)-m_y)]\}=\phi_{xy}(m)-m_xm_y
+\end{align}
+respectively. The Z-transform of $\gamma_{xx}(m)$ and $\gamma_{xy}(m)$ are given by $\Gamma_{xx}(z)$ and $\Gamma_{xy}(z)$, respectively. The Z-transforms exist only when $m_x=-$.
+
+\section{Power Spectra}
+
+The Z-transform and the inverse Z-transform of the ACF of a zero-mean WSS discrete-time RP $x(n)$ form a transform pair $\mathbf{\Phi}_{xx}(z)\leftrightarrow\phi_{xx}(m)$ as shown by
+\begin{align}
+	\mathbf{\Phi}_{xx}(z)&=\sum_{m=-\infty}^{\infty}{\phi_{xx}(m)z^{-m}}\\
+	\phi_{xx}(m)&=\frac{1}{2{\pi}j}\oint_c{\mathbf{\Phi}_{xx}(z)z^{m-1}\,dz}
+\end{align}
+where the power spectral density (PSD) is defined as the Z-transform of the ACF with $z=e^{j2{\pi}fT}$ or
+\begin{equation}
+	P_{xx}(f)=\mathbf{\Phi}_{xx}(e^{j2{\pi}fT})=\sum_{m=-\infty}^{\infty}{\phi_{xx}(m)e^{j2{\pi}fT}}
+\end{equation}
+The Z-transform of the CCF is given by
+\begin{equation}
+	\mathbf{\Phi}_{xy}(z)=\sum_{m=-\infty}^{\infty}{\phi_{xy}(m)z^{-m}}
+\end{equation}
+The cross-power spectral density (CPSD) of two functions is the Z-transform of their CCF with $z=e^{j2{\pi}fT}$ or
+\begin{equation}
+	P_{xy}(f)=\mathbf{\Phi}_{xy}(e^{j2{\pi}fT})=\sum_{m=-\infty}^{\infty}{\phi_{xy}(m)e^{j2{\pi}fT}}
+\end{equation}
+For a linear system with response $y(n)$, input $x(n)$ and impulse response $h(n)$, we can show
+\begin{align}
+	\mathbf{\Phi}_{yy}(z)&=H(z)H(z^{-1})\mathbf{\Phi}_{xx}(z)\\
+	P_{yy}(f)&=\mathbf{\Phi}_{yy}(e^{j2{\pi}fT})=|H(e^{j2{\pi}fT})|\mathbf{\Phi}_{xx}(e^{j2{\pi}fT})
+\end{align}
+This says that hte the PSD of the output process of a discrete-time linear system is equal to the PSD of the input process times the squared magnitude response of the system. We can then show that the CPSD is
+\begin{align}
+	\mathbf{\Phi}_{xy}(z)&=H(z)\mathbf{\Phi}_{xx}(z)\\
+	P_{xy}(f)&=H(e^{j2{\pi}fT})\mathbf{\Phi}_{xx}(e^{j2{\pi}fT})=H(e^{j2{\pi}fT})P_{xx}(f)
+\end{align}
+Consider two linear time-invariant systems with outputs $v(nT)$ and $w(nT)$, respectively, inputs $x(nT)$ and $y(nT)$, respsectively, and impulse responses $h_1(n)$ and $h_2(n)$, respectively. The CPSD is given by
+\begin{equation}
+	\mathbf{\Phi}_{vw}(z)=H_1(z)H_2(z^{-1})\mathbf{\Phi}_{xy}(z)
+\end{equation}
+
+\section{Noise}
+
+The ACF and PSD of white noise are expressed by
+\begin{align}
+	\phi_{xx}(m)&=\sigma_x^2\delta(m)\\
+	P_{xx}(f)&=\mathbf{\Phi}_{xx}(e^{j2{\pi}fT})=\sigma_x^2
+\end{align}
+Therefore, the response of a digital fitler to a white-noise input is
+\begin{equation}
+	P_{yy}(f)=\sigma_x^2|H(e^{j2{\pi}fT})|^2
+\end{equation}
+With an input with zero mean and the variance (second moment) $\sigma_x^2$, the response of a system with an impulse response $h(n)$ is
+\begin{equation}
+	\sigma_y^2=\sigma_x^2\sum_{n=0}^{\infty}{h^2(n)}
+\end{equation}
+Suppose that we would like to determine the average output power of a filter to a white-noise random process with zero mean and variance $\sigma_x^2$. For the ACF with $m=0$, we find the avaerage power in the input is
+\begin{equation}
+	\phi_{xx}(0)=E[x^2(n)]=\frac{1}{2{\pi}j}\oint_c{\mathbf{\Phi}_{xx}(z)z^{m-1}\,dz}=\sigma_x^2
+\end{equation}
+The average output power is then given by
+\begin{equation}
+	\phi_{yy}(0)=\frac{1}{2{\pi}j}\oint_c{\sigma_x^2H(z^{-1})H(z)z^{-1}\,dz}
+\end{equation}
+
+\chapter[Finite Register Effects in DSP]{Finite Register Length Effects in Digital Signal Processing}
+
+\chapter{Signal Processing in System Design}
+
+\chapter{Adaptive Filtering}
+
+\backmatter
+
+\end{document}
+
