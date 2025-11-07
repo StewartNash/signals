@@ -1,3 +1,7 @@
+##############
+### Python ###
+##############
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -205,3 +209,54 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+#############
+### LaTeX ###
+#############
+
+# Core LaTeX auxiliary files
+*.aux
+*.log
+*.lof
+*.lot
+*.toc
+*.fls
+*.out
+*.fmt
+*.fot
+*.cb
+*.idx
+*.ind
+*.ilg
+*.glo
+*.gls
+*.glg
+*.bbl
+*.blg
+*.dvi
+*.ps
+*.pdf # Consider if you want to track the output PDF or not.
+      # If you don't want to track it, uncomment this line.
+      # If you do want to track it, make sure to add it explicitly to Git.
+
+# Additional files from specific packages or tools
+*.acn
+*.acr
+*.alg
+*.ist
+*.maf
+*.mtc
+*.mtc1
+*.synctex.gz
+*.brf # For backreferences
+
+# Editor-specific files (e.g., from TeXstudio, VS Code with LaTeX extensions)
+*~
+.#*
+*.bak
+.DS_Store # macOS specific
+Thumbs.db # Windows specific
+
+# Temporary directories (e.g., if using a build directory)
+/build/
+/auto/

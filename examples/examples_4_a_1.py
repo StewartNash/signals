@@ -10,6 +10,7 @@ from signal_processor.infinite_impulse_response import (
 from signal_processor.filter import FilterType, FilterFamily
 from signal_processor.utility import polynomial_coefficients
 import numpy as np
+from plotting.plotting import plot_digital_response
 
 # ----------------------------------
 # Example 4.A.1
@@ -138,3 +139,5 @@ y = iir_filter(x, b, a)
 #plt.xlabel("Time (s)")
 #plt.legend()
 #plt.show()
+
+plot_digital_response(digital_poles, z_plane_zeros, sampling_frequency)
