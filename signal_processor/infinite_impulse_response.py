@@ -358,7 +358,47 @@ def elliptic_digital_poles(filter_order, parameter_K, A_p, frequency_scaling=0):
         alpha = frequency_scaling
         analog_poles = [(alpha * pole[0], alpha * pole[1]) for pole in analog_poles]
     poles = [bilinear_transform(pole) for pole in analog_poles]
-	
+
+# Zero-based indexing of 'number'
+def numerator_coefficients(number, zeros, filter_type, filter_family, is_normalized=False):
+    k = number
+    if is_normalized:
+        if filter_family == FilterFamily.BUTTERWORTH or filter_family == FilterFamily.CHEBYSHEV:
+            if filter_type == FilterType.LOWPASS:
+                coefficients = [1, 2, 1]
+            elif filter_type == FilterType.HIGHPASS:
+                coefficients = [1, -2, 1]
+            elif filter_type == FilterType.BANDPASS:
+                coefficients = [1, 0, -1]
+            elif filter_type == FilterType.BANDSTOP:
+                coefficients = [1, -2 * zeros[k][0], 1]
+            else:
+                raise Exception("Filter type not recognized.")
+        elif filter_family == FilterFamily.ELLIPTIC:
+            if filter_type == FilterType.LOWPASS:
+                coefficients = [1, -2 * zeros[k][0], 1]
+            elif filter_type == FilterType.HIGHPASS:
+                coefficients = [1, -2 * zeros[k][0], 1]
+            elif filter_type == FilterType.BANDPASS:
+                coefficients = [1, -2 * zeros[k][0], 1]
+            elif filter_type == FilterType.BANDSTOP:
+                coefficients = [1, -2 * zeros[k][0], 1]
+            else:
+                raise Exception("Filter type not recognized.")
+        else:
+            raise Exception("Filter family not recognized.")
+    else:
+        coefficients = [1, -2 * zeros[k][0], zeros[k][0] ** 2 + zeros[k][1] ** 2]
+        
+    return coefficients
+
+# Zero-based indexing of 'number'
+def denominator_coefficients(number, poles):
+    k = number
+    coefficients = [1, -2 * poles[k][0], poles[k][0] ** 2 + poles[k][1] ** 2]
+        
+    return coefficients
+
 def frequency_scaling_parameter(filter_family,
         sampling_frequency,
         passband_frequency,
@@ -404,19 +444,44 @@ def analog_frequency_transformation(values, filter_type, upper_passband_frequenc
     return frequency_transformation(values, filter_type, upper_passband_frequency, lower_passband_frequency)
     
 def iir_filter(samples, denominator_coefficients, numerator_coefficients):
-	x = real_to_complex(samples)
-	y = [(0.0, 0,0)] * len(x)
-	a = denominator_coefficients
-	b = numerator_coefficients
-	for i in range(len(x)):
-		accumulator = (0.0, 0.0)
-		for k in range(len(b)): # Feedforward
-			if i - k >= 0:
-				accumulator = complex_add(accumulator, complex_multiply(b[k], x[i - k]))
-		for k in range(1, len(a)): # Feedback
-			if i - k >= 0:
-				accumulator = complex_subtract(accumulator, complex_multiply(a[k], y[i - k]))
-		y[i] = accumulator
-		
-	return y
+    """
+    Direct-form I IIR filter implementation.
+    Supports either a single filter section or a cascade of sections.
+
+    Args:
+        samples: list of real or complex samples [(re, im), ...] or [float, ...]
+        denominator_coefficients: list or list of lists of 'a' coefficients
+        numerator_coefficients: list or list of lists of 'b' coefficients
+    """
+    # Handle cascaded filters automatically
+    if isinstance(denominator_coefficients[0], list):
+        # Multi-section case
+        y = samples
+        for a, b in zip(denominator_coefficients, numerator_coefficients):
+            y = iir_filter(y, a, b)
+        return y
+
+    # ---- Single-section implementation ----
+    x = real_to_complex(samples)
+    y = [(0.0, 0.0)] * len(x)
+    a = denominator_coefficients
+    b = numerator_coefficients
+
+    for i in range(len(x)):
+        accumulator = (0.0, 0.0)
+
+        # Feedforward (numerator)
+        for k in range(len(b)):
+            if i - k >= 0:
+                accumulator = complex_add(accumulator, complex_multiply(b[k], x[i - k]))
+
+        # Feedback (denominator, skip a[0])
+        for k in range(1, len(a)):
+            if i - k >= 0:
+                accumulator = complex_subtract(accumulator, complex_multiply(a[k], y[i - k]))
+
+        y[i] = accumulator
+
+    return y
+
 

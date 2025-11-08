@@ -34,14 +34,36 @@ def complex_divide(first, second):
     return ((a * c + b * d) / denominator, (b * c - a * d) / denominator)
 
 	
+#def real_to_complex(value):
+#    """Convert a real number or list of real numbers to complex tuple(s)."""
+#    if isinstance(value, (int, float)):
+#        return (float(value), 0.0)
+#    elif isinstance(value, (list, tuple)):
+#        return [(float(v), 0.0) for v in value]
+#    else:
+#        raise TypeError("Input must be a real number or list/tuple of real numbers")
+
+
 def real_to_complex(value):
-    """Convert a real number or list of real numbers to complex tuple(s)."""
+    """Convert real numbers or complex tuples/lists into a consistent (re, im) tuple form."""
     if isinstance(value, (int, float)):
         return (float(value), 0.0)
-    elif isinstance(value, (list, tuple)):
-        return [(float(v), 0.0) for v in value]
+    elif isinstance(value, tuple) and len(value) == 2:
+        # Already a complex-like tuple
+        return (float(value[0]), float(value[1]))
+    elif isinstance(value, list):
+        result = []
+        for v in value:
+            if isinstance(v, (int, float)):
+                result.append((float(v), 0.0))
+            elif isinstance(v, tuple) and len(v) == 2:
+                result.append((float(v[0]), float(v[1])))
+            else:
+                raise TypeError(f"Invalid element in list: {v}")
+        return result
     else:
-        raise TypeError("Input must be a real number or list/tuple of real numbers")
+        raise TypeError("Input must be a real number, tuple, or list of those")
+
 
 def polynomial_coefficients(roots):
     """

@@ -5,10 +5,11 @@ from signal_processor.infinite_impulse_response import (
     butterworth_digital_poles,
     butterworth_digital_poles_alternate,
     frequency_scaling_parameter,
-    iir_filter
+    iir_filter,
+    denominator_coefficients,
+    numerator_coefficients
     )
 from signal_processor.filter import FilterType, FilterFamily
-from signal_processor.utility import polynomial_coefficients
 import numpy as np
 from plotting.plotting import plot_digital_response
 
@@ -39,8 +40,7 @@ s_plane_poles = [
 	(-0.1564345, 0.9876885),
 	(-0.4539906, 0.8910065),
 	(-0.7071068, 0.7071067),
-
-(-0.8910066, 0.4539905),
+	(-0.8910066, 0.4539905),
 	(-0.9876884, 0.1564344)
 ]
 
@@ -62,7 +62,16 @@ z_plane_poles = [
 	(0.0800774, 0.0782001)
 ]
 
+section_coefficients = [
+	[1, 2.0000000, 1.0000000, -0.2740197, 0.7324039],
+	[2, 2.0000000, 1.0000000, -0.2184297, 0.3809528],
+	[3, 2.0000000, 1.0000000, -0.1862828, 0.1777139],
+	[4, 2.0000000, 1.0000000, -0.1682881, 0.0639486],
+	[5, 2.0000000, 1.0000000, -0.1601547, 0.0125276]
+]
+
 filter_family = FilterFamily.BUTTERWORTH
+filter_type = FilterType.LOWPASS
 # Eliminate or reduce renaming from legacy code
 maximum_passband_attenuation = actual_passband_ripple
 passband_edge_frequency = passband_frequency
@@ -80,13 +89,13 @@ parameter_A = A
 N = compute_filter_order(parameter_K, parameter_A, filter_family)
 print("K, A, N:", K, A, N)
 
-alpha = frequency_scaling_parameter(FilterFamily.BUTTERWORTH,
+alpha = frequency_scaling_parameter(filter_family,
         sampling_frequency,
         passband_frequency,
         order=N,
         passband_ripple=Ap,
         stopband_frequency=stopband_frequency,
-        filter_type=FilterType.LOWPASS)
+        filter_type=filter_type)
 print("alpha: ", alpha)
 analog_poles = butterworth_analog_poles(N)
 print("-------------")
@@ -111,14 +120,24 @@ print("Calculated digital poles")
 print("------------------------")
 for pole in digital_poles:
     print(pole)
-denominator_coefficients = polynomial_coefficients(digital_poles)
-numerator_coefficients = [(2, 1)] * len(denominator_coefficients)
+denominator_coefficients = [denominator_coefficients(i, digital_poles) for i in range(len(digital_poles))]
+numerator_coefficients = [numerator_coefficients(i, z_plane_zeros, filter_type, filter_family) for i in range(len(z_plane_zeros))]
+print("------------------------")
+print("Section Coefficients")
+print("------------------------")
+for coefficient in section_coefficients:
+    print(coefficient)
 print("------------------------")
 print("Denominator Coefficients")
 print("------------------------")
 for coefficient in denominator_coefficients:
     print(coefficient)
-
+print("------------------------")
+print("Numerator Coefficients")
+print("------------------------")
+for coefficient in numerator_coefficients:
+    print(coefficient)
+    
 b = numerator_coefficients
 a = denominator_coefficients
 fs = 1000  # Hz
