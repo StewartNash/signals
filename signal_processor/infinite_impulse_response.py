@@ -171,7 +171,7 @@ def compute_filter_order(parameter_K, parameter_A, filter_family):
 		filter_order = math.ceil(math.acosh(parameter_A) / math.acosh(1 / parameter_K))
 	elif filter_family == FilterFamily.ELLIPTIC:
 		q, q0 = elliptic_parameters(parameter_K)
-		filter_order = math.ceil(math.log(16 * A) / math.log(1 / q))
+		filter_order = math.ceil(math.log(16 * parameter_A) / math.log(1 / q))
 	else:
 		filter_order = 0
 		
@@ -182,7 +182,7 @@ def elliptic_parameters(parameter_K):
 	K = parameter_K
 	parameter_q0 = (1 - (1 - K ** 2)) ** 0.25 / (2 * (1 + (1 - K ** 2) ** 0.25))
 	q0 = parameter_q0	
-	parameter_q = q0 + 2 * qo ** 5 + 15 * q0 ** 9 + 150 * q0 ** 13
+	parameter_q = q0 + 2 * q0 ** 5 + 15 * q0 ** 9 + 150 * q0 ** 13
 	q = parameter_q
 	
 	return q, q0
@@ -205,6 +205,8 @@ def butterworth_analog_poles(filter_order, passband_angular_frequency=0):
 	if passband_angular_frequency:
 		omega = passband_angular_frequency
 		poles = [(s[0] * omega ** (- 1 / N), s[1] * omega ** (- 1 / N)) for s in poles]
+	poles = sorted([(-re if re > 0 else re, -im if re > 0 else im) for re, im in poles],
+		key=lambda x: (x[0], x[1]), reverse=True)
 	
 	return poles
 	
@@ -256,11 +258,13 @@ def chebyshev_analog_poles(filter_order, parameter_epsilon, passband_angular_fre
 	if passband_angular_frequency:
 		omega = passband_angular_frequency
 		poles = [(s[0] * omega, s[1] * omega) for s in poles]
+	poles = sorted([(-re if re > 0 else re, -im if re > 0 else im) for re, im in poles],
+		key=lambda x: (x[0], x[1]), reverse=True)
 	
 	return poles
 
-def chebyshev_digital_poles(filter_order, frequency_scaling=0):
-    analog_poles = chebyshev_analog_poles(filter_order)
+def chebyshev_digital_poles(filter_order, parameter_epsilon, frequency_scaling=0):
+    analog_poles = chebyshev_analog_poles(filter_order, parameter_epsilon)
     if frequency_scaling:
         alpha = frequency_scaling
         analog_poles = [(alpha * pole[0], alpha * pole[1]) for pole in analog_poles]
@@ -283,7 +287,7 @@ def omega_k(q, k, N, M=25):
 	
 	return numerator / denominator
 	
-def sigma_0(max_passband_attenuation, M=25):
+def sigma_0(max_passband_attenuation, q, M=25):
 	A_p = max_passband_attenuation
 	Lambda = math.log((10 ** (0.05 * A_p) + 1) / (10 ** (0.05 * A_p) - 1))
 	numerator = 0
@@ -308,17 +312,19 @@ def elliptic_analog_poles(filter_order, parameter_K, A_p, passband_angular_frequ
 		
 	q_0 = (1 - (1 - K ** 2) ** 0.25) / (2 * (1 + (1 - K ** 2) ** 0.25))
 	q = q_0 + 2 * q_0 ** 5 + 15 * q_0 ** 9 + 150 * q_0 ** 13
-	sigma_0_ = sigma_0(A_p)
+	sigma_0_ = sigma_0(A_p, q)
 		
 	poles = []
 	for k_ in k:
 		omega_k_ = omega_k(q, k_, N)
 		V_k = ((1 - K * omega_k_ ** 2) * (1 - omega_k_ ** 2 / K)) ** 0.5
 		W = ((1 + K * sigma_0_ ** 2) * (1 + sigma_0_ ** 2 / K)) ** 0.5
-		pole = (sigma_0_ * V_k / (1 + omega_0_ ** 2 * omega_k_ ** 2), omega_k_ * W / (1 + omega_0_ ** 2 * omega_k_ ** 2))
+		pole = (sigma_0_ * V_k / (1 + sigma_0_ ** 2 * omega_k_ ** 2), omega_k_ * W / (1 + sigma_0_ ** 2 * omega_k_ ** 2))
 		pole_conjugate = (pole[0], -pole[1])
 		poles.append(pole)
 		poles.append(pole_conjugate)
+	poles = sorted([(-re if re > 0 else re, -im if re > 0 else im) for re, im in poles],
+		key=lambda x: (x[0], x[1]), reverse=True)
 	
 	return poles
 
@@ -345,6 +351,13 @@ def elliptic_analog_zeros(filter_order, parameter_K, passband_angular_frequency=
 		zeros_.append(zero_conjugate)
 
 	return zeros_
+	
+def elliptic_digital_poles(filter_order, parameter_K, A_p, frequency_scaling=0):
+    analog_poles = elliptic_analog_poles(filter_order, parameter_K, A_p)
+    if frequency_scaling:
+        alpha = frequency_scaling
+        analog_poles = [(alpha * pole[0], alpha * pole[1]) for pole in analog_poles]
+    poles = [bilinear_transform(pole) for pole in analog_poles]
 	
 def frequency_scaling_parameter(filter_family,
         sampling_frequency,
