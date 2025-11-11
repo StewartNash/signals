@@ -10,14 +10,10 @@ class TestIir(unittest.TestCase):
 	def test_butterworth_analog_poles(self):
 		# Example 4.A.1
 		s_plane_poles = ex_4_a_1_constants["s_plane_poles"]
-		#s_plane_poles = sorted(s_plane_poles, key=lambda x: (x[0], x[1]), reverse=True)
-		s_plane_poles = sorted([(-re if re < 0 else re, -im if re < 0 else im) for re, im in s_plane_poles],
-			key=lambda x: (x[0], x[1]))
+		s_plane_poles = sorted(s_plane_poles, key=lambda x: (x[0], x[1]), reverse=True)
 		N = 2 * len(s_plane_poles)
 		results = butterworth_analog_poles(N)
-		#results = sorted(results, key=lambda x: (x[0], x[1]), reverse=True)
-		results = sorted([(-re if re < 0 else re, -im if re < 0 else im) for re, im in results],
-			key=lambda x: (x[0], x[1]))
+		results = sorted(results, key=lambda x: (x[0], x[1]), reverse=True)
 		for i in range(int(N / 2)):
 			self.assertLess(abs(results[i][0] - s_plane_poles[i][0]), TestIir.TOLERANCE, "S plane pole out of tolerance")
 			self.assertLess(abs(results[i][1] - s_plane_poles[i][1]), TestIir.TOLERANCE, "S plane pole out of tolerance")
@@ -25,9 +21,7 @@ class TestIir(unittest.TestCase):
 	def test_chebyshev_analog_poles(self):
 		# Example 4.A.2
 		s_plane_poles = ex_4_a_2_constants["s_plane_poles"]
-		#s_plane_poles = sorted(s_plane_poles, key=lambda x: (x[0], x[1]), reverse=True)
-		s_plane_poles = sorted([(-re if re < 0 else re, -im if re < 0 else im) for re, im in s_plane_poles],
-			key=lambda x: (x[0], x[1]))
+		s_plane_poles = sorted(s_plane_poles, key=lambda x: (x[0], x[1]), reverse=True)
 		K_, A_, epsilon_, lambda_ = hplp_parameters(ex_4_a_2_constants["Ap"],
 			ex_4_a_2_constants["As"],
 			ex_4_a_2_constants["fp2"],
@@ -35,9 +29,7 @@ class TestIir(unittest.TestCase):
 			ex_4_a_2_constants["F"])		
 		N = len(s_plane_poles)
 		results = chebyshev_analog_poles(N, epsilon_)
-		#results = sorted(results, key=lambda x: (x[0], x[1]), reverse=True)
-		results = sorted([(-re if re < 0 else re, -im if re < 0 else im) for re, im in results],
-			key=lambda x: (x[0], x[1]))
+		results = sorted(results, key=lambda x: (x[0], x[1]), reverse=True)
 		#print("-------------")
 		#print("s-plane poles")
 		#print("-------------")

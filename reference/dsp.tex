@@ -515,6 +515,30 @@ The average output power is then given by
 
 \chapter[Finite Register Effects in DSP]{Finite Register Length Effects in Digital Signal Processing}
 
+\begin{center}
+\textit{"DSP system design requires a thorough analysis of finite arithmetic effects to ensure that system performance is not degraded."}
+\end{center}
+\vspace{1em}
+\setcounter{section}{-1}
+\section{Introduction}
+Input signals encountered by sonar or radar signal  processing systems are continuous and must first be sampled in time and digitized in amplitude prior to processing by digital systems. Since the hardware complexity of digital signal processing systems is directly related to the digital wordlength, it is important to limit the number of bits in the various processing elements of the system. This requires an error analysis at each point in the system to assure that the system implementation does not degrade system performance, that is, degrade dynamic range by increasing the system noise level.\\
+It is assumed in the following sections that you are familiar with binary number representation. The following are some of the issues related to the implementation of algorithms in special-purpose hardware.
+\begin{enumerate}
+	\item Analog-to-digital conversion.
+	\item IIR digital filter finite wordlength effects.
+	\begin{enumerate}
+		\item Product-quantization errors.
+		\item Coefficient-quantization errors.
+		\item Dynamic range considerations.
+		\item Zero input limit cycle behavior.
+	\end{enumerate}
+	\item FIR digital filter wordlength effects.
+	\item FFT finite wordlength effects.
+\end{enumerate}
+The error analysis presented herein will concentrate primarily on fixed-point arithmetic operations. The approach, however, can be extended to analyze the effects of floating-point operations.
+
+\section{Quantization Noise Introduced by Analog-to-Digital Conversion}
+
 \chapter{Signal Processing in System Design}
 
 \chapter{Adaptive Filtering}
