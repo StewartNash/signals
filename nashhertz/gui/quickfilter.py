@@ -79,10 +79,15 @@ class QuickFilterForm(ttk.Frame):
         self.upper_implementation_frame.pack()
         self.lower_implementation_frame.pack()
 
-        self.class_frame.pack(side=tk.LEFT)
-        self.shape_frame.pack(side=tk.LEFT)
-        self.update_frame.pack(side=tk.LEFT)
-        self.implementation_frame.pack(side=tk.LEFT)
+        #self.class_frame.pack(side=tk.LEFT)
+        #self.shape_frame.pack(side=tk.LEFT)
+        #self.update_frame.pack(side=tk.LEFT)
+        #self.implementation_frame.pack(side=tk.LEFT)
+        
+        self.class_frame.pack()
+        self.shape_frame.pack()
+        self.update_frame.pack()
+        self.implementation_frame.pack()
         
         self.upper_frame.pack()
         self.middle_frame.pack()
