@@ -76,8 +76,8 @@ class MainWindow(tk.Tk):
         self.parts_menu.add_command(label='Parts List 3', command=self.generic_callback)
         self.menubar.add_cascade(label='Parts', menu=self.parts_menu, underline=0)
         
-        self.menubar.add_command(label='QuickFilter', command=self.generic_callback)
-        self.menubar.add_command(label='Advanced', command=self.generic_callback)
+        self.menubar.add_command(label='QuickFilter', command=self.quickfilter_callback)
+        self.menubar.add_command(label='Advanced', command=self.advanced_callback)
         
         self.help_menu = tk.Menu(self.menubar, tearoff=0)
         self.help_menu.add_command(label='Contents and Index', command=self.generic_callback)
@@ -102,6 +102,12 @@ class MainWindow(tk.Tk):
         
     def generic_callback(self):
         pass
+        
+    def quickfilter_callback(self):
+        self.show_form("QuickFilter")
+    
+    def advanced_callback(self):
+        self.show_form("Advanced")
 
 class NoticeWindow(tk.Toplevel):
     notice_text = """Dear Reader:
