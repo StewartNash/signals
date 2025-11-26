@@ -34,11 +34,19 @@ s_plane_zeros = [
 
 # s-plane poles (bandstop)
 # (real, imaginary)
+
+#s_plane_poles = [
+#	(-0.6530900, 2.8054663),
+#	(-0.2462344, -4.0611711), # Two real poles from odd-order lowpass s-plane # = 2	
+#	(-0.0787125, -0.3381235)
+#]
 s_plane_poles = [
 	(-0.6530900, 2.8054663),
-	(-0.2462344, -4.0611711), # Two real poles from odd-order lowpass s-plane # = 2	
+	(-0.2462344, -4.0611711),
+	(-0.2462344, -4.0611711),
 	(-0.0787125, -0.3381235)
 ]
+
 
 # z-plane zeros (bandstop)
 # (real, imaginary)
@@ -53,10 +61,19 @@ z_plane_zeros = [
 
 # z-plane poles (bandstop)
 # (real, imaginary)
+
+#z_plane_poles = [
+#	(-0.6881948, 0.5291661),
+#	(-0.6881948, -0.5291661),
+#	(0.6048345, -0.6048345), # Two real poles from odd-order lowpass s-plane # = 2	
+#	(0.6881944, 0.5291662),
+#	(0.6881944, -0.5291662)
+#]
 z_plane_poles = [
 	(-0.6881948, 0.5291661),
 	(-0.6881948, -0.5291661),
-	(0.6048345, -0.6048345), # Two real poles from odd-order lowpass s-plane # = 2	
+	(0.6048345, -0.6048345),
+	(0.6048345, -0.6048345),
 	(0.6881944, 0.5291662),
 	(0.6881944, -0.5291662)
 ]
