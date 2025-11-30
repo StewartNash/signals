@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
+from nashhertz.gui.utilities import TableView
+
 class QuickFilter:
     def __init__(self):
         pass
@@ -53,6 +55,21 @@ class QuickFilterForm(ttk.Frame):
         self.active_synthesis_button = tk.Button(self.implementation_frame, text="Active Synthesis")
         self.switched_capacitor_synthesis_button = tk.Button(self.implementation_frame, text="Switched Capacitor Synthesis")
         self.digital_synthesis_button = tk.Button(self.implementation_frame, text="Digital Synthesis")
+        
+        self.left_middle_frame = ttk.Frame(self.middle_frame) # Requirements
+        self.right_middle_frame = ttk.Frame(self.middle_frame) # Topologies
+        self.general_requirements_tableview = TableView(self.left_middle_frame)
+        self.specific_requirements_tableview = TableView(self.left_middle_frame)
+        self.topologies_label = tk.Label(self.right_middle_frame, text="Topologies: ")
+        self.topologies_listbox = tk.Listbox(self.right_middle_frame)
+        
+        self.topologies_label.pack()
+        self.topologies_listbox.pack()
+        self.general_requirements_tableview.pack(side=tk.LEFT)
+        self.specific_requirements_tableview.pack()
+        
+        self.left_middle_frame.pack(side=tk.LEFT)
+        self.right_middle_frame.pack(side=tk.LEFT)
         
         self.lowpass_button.pack(side=tk.LEFT)
         self.highpass_button.pack(side=tk.LEFT)
