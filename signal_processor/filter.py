@@ -1,4 +1,7 @@
 import enum
+import math
+import numpy as np
+import matplotlib.pyplot as plt
 
 # IIR Filter Design Procedure
 # 1. Enter filter specifications
@@ -91,13 +94,33 @@ class FilterType(enum.Enum):
 
 class Filter:
 	def __init__(self):
-		self.order = None
-		self.type = None
 		self.family = None
+		self.type = None
 		self.passband_frequency_low = None
 		self.passband_frequency_high = None
 		self.stopband_frequency_low = None
 		self.stopband_frequency_high = None
+		self.sampling_frequency = None
+		self.specified_passband_ripple = None
+		self.actual_passband_ripple = None
+		self.minimum_stopband_attenuation = None
+		self.stopband_attenuation = None
+
+		self.order = None
+		self.coefficients = None
+		self.index = None
+		self.buffer = None
+		
+	def create_filter(self,
+		filter_type,
+		passband_frequency_low,
+		passband_frequency_high,
+		stopband_frequency_low,
+		stopband_frequency_high,
+		sampling_frequency,
+		specified_passband_ripple,
+		minimum_stopband_attenuation):
+		pass
 		
 	def get_analog_poles(self):
 		pass
@@ -113,3 +136,5 @@ class Filter:
 		
 	def set_parameters(self, input_parameters):
 		pass
+		
+

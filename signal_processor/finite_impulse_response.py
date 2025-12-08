@@ -1,6 +1,6 @@
 import math
 import numpy as np
-from signal_processor.filter import FilterType, FilterFamily
+from signal_processor.filter import FilterType, FilterFamily, Filter
 
 # filter_order			nk, NK
 # passband_frequency		fp
@@ -258,3 +258,67 @@ def magnitude_response(omega, impulse_response, sampling_frequency, filter_order
 	
 	return response_magnitude 
 
+class FIRFilter(Filter):
+	def __init__(self):
+		super().__init__()
+		
+	def create_filter(self,
+		filter_family,
+		filter_type,
+		passband_frequency_low,
+		passband_frequency_high,
+		stopband_frequency_low,
+		stopband_frequency_high,
+		sampling_frequency,
+		specified_passband_ripple,
+		minimum_stopband_attenuation):
+
+		self.family = filter_family
+		self.type = filter_type
+		self.sampling_frequency = sampling_frequency
+		self.passband_frequency_low = passband_frequency_low
+		self.passband_frequency_high = passband_frequency_high
+		self.stopband_frequency_low = stopband_frequency_low
+		self.stopband_frequency_high = stopband_frequency_high
+		self.specified_passband_ripple = specified_passband_ripple
+		self.minimum_stopband_attenuation = minimum_stopband_attenuation 
+
+		filter_order, delta, minimum_stopband_attenuation, parameter_d = kaiser_filter_order(
+			filter_type=self.type,
+			passband_frequency_low=self.passband_frequency_low,
+			passband_frequency_high=self.passband_frequency_high,
+			stopband_frequency_low=self.stopband_frequency_low,
+			stopband_frequency_high=self.stopband_frequency_high,
+			sampling_frequency=self.sampling_frequency,
+			specified_passband_ripple=self.specified_passband_ripple,
+			minimum_stopband_attenuation=self.minimum_stopband_attenuation)
+		self.order = filter_order
+		self.stopband_attenuation = minimum_stopband_attenuation
+		
+		kaiser_coeffs, alpha = kaiser_coefficients(self.order, self.stopband_attenuation)
+		impulse_response = kaiser_lowpass(self.passband_frequency_high,
+			self.stopband_frequency_low,
+			self.sampling_frequency,
+			self.order,
+			kaiser_coeffs)
+			
+		self.coefficients = impulse_response
+		self.index = 0
+		self.buffer = [0.0] * len(self.coefficients)
+		
+	def process(self, sample):
+		self.buffer[self.index] = sample
+		h = self.coefficients
+
+		N = len(h)
+		# FIR convolution
+		y = 0.0
+		j = self.index
+		for k in range(N):
+			y += h[k] * self.buffer[j]
+			j = (j - 1) % N
+
+		# Advance circular index
+		self.index = (self.index + 1) % N
+
+		return y
