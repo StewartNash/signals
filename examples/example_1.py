@@ -62,7 +62,6 @@ sampling_frequency = 2500  # Hz
 
 myFilter = FIRFilter()
 myFilter.create_filter(
-    filter_family=FilterFamily.CHEBYSHEV,
     filter_type=FilterType.LOWPASS,
     passband_frequency_low=passband_frequency,
     passband_frequency_high=passband_frequency,

@@ -1,6 +1,6 @@
 import math
 import numpy as np
-from signal_processor.filter import FilterType, FilterFamily, Filter
+from signal_processor.filter import FilterType, FilterWindow, Filter
 
 # filter_order			nk, NK
 # passband_frequency		fp
@@ -263,7 +263,6 @@ class FIRFilter(Filter):
 		super().__init__()
 		
 	def create_filter(self,
-		filter_family,
 		filter_type,
 		passband_frequency_low,
 		passband_frequency_high,
@@ -271,9 +270,9 @@ class FIRFilter(Filter):
 		stopband_frequency_high,
 		sampling_frequency,
 		specified_passband_ripple,
-		minimum_stopband_attenuation):
+		minimum_stopband_attenuation,
+		filter_window=FilterWindow.NONE):
 
-		self.family = filter_family
 		self.type = filter_type
 		self.sampling_frequency = sampling_frequency
 		self.passband_frequency_low = passband_frequency_low

@@ -92,9 +92,19 @@ class FilterType(enum.Enum):
 	BANDSTOP = 4
 
 
+class FilterWindow(enum.Enum):
+    NONE = 0
+    TRIANGULAR = 1 # p. 264
+    HANN = 2 # (HANNING) p. 267
+    RECTANGULAR = 1 # p. 205
+    HAMMING = 2 # pp. 206, 269
+    BLACKMAN = 3 # (BLACKMAN_HARRIS) pp. 206, 270
+    KAISER = 4 #   (KAISER_BESSEL) pp. 207, 271
+
+
 class Filter:
 	def __init__(self):
-		self.family = None
+		#self.family = None
 		self.type = None
 		self.passband_frequency_low = None
 		self.passband_frequency_high = None
