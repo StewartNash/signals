@@ -18,7 +18,7 @@ def wiener_coefficients(x, s, M):
     s_vec = s[M - 1:]
 
     # Autocorrelation matrix
-    T = (X.T @ X) / len(d_vec)
+    T = (X.T @ X) / len(s_vec)
 
     # Cross-correlation vector
     v = (X.T @ s_vec) / len(s_vec)
@@ -66,6 +66,9 @@ def apply_fir_filter(x, h):
     """Apply FIR filter with coefficients h"""
     return np.convolve(x, h, mode="valid")
     
+def apply_complex_fir_filter(x, h):
+    """Apply complex FIR filter with coefficients h"""
+    return np.convolve(x, h.conj(), mode="valid")    
 
 def wiener_filter_frequency(X, Sdd, Svv):
     """
@@ -74,7 +77,22 @@ def wiener_filter_frequency(X, Sdd, Svv):
     H = Sdd / (Sdd + Svv)
     return H * X
 
-if __main__():
+class WienerFilter:
+    def __init__(self):
+        self.coefficients = []
+    
+    def create_filter(self, x, d, M):
+        self.coefficients = complex_wiener_coefficients(x, d, M)
+    
+    def apply_filter(self, x):
+        return np.convolve(x, self.coefficients, mode="valid")
+        
+    def process(self, x):
+        return self.apply_filter(x)
+
+
+
+if __name__ == "__main__":
     # Real Wiener filter
     np.random.seed(0)
 
