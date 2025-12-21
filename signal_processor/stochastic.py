@@ -81,6 +81,44 @@ class WienerFilter:
         
     def process(self, x):
         return self.apply_filter(x)
+        
+
+class JCLMSFilter:
+    """
+    JCLMS filter
+    Joint Complex LMS (least mean squares)
+    Joint complex gradient transversal filter    
+    """
+    def __init__(self, order, mu):
+        self.order = order
+        self.mu = mu
+
+        # Weight vectors
+        self.w = np.zeros(order, dtype=np.complex128)
+        self.g = np.zeros(order, dtype=np.complex128)
+
+        # Input buffer
+        self.x = np.zeros(order, dtype=np.complex128)
+
+    def process(self, sample, desired):
+        """
+        Process one complex sample and update weights
+        """
+        # Shift buffer
+        self.x[1:] = self.x[:-1]
+        self.x[0] = sample
+
+        # Filter output (widely linear model)
+        y = np.vdot(self.w, self.x) + np.vdot(self.g, np.conj(self.x))
+
+        # Error
+        e = desired - y
+
+        # Weight updates
+        self.w += self.mu * np.conj(e) * self.x
+        self.g += self.mu * np.conj(e) * np.conj(self.x)
+
+        return y, e
 
 if __name__ == "__main__":
     # Complex Wiener filter
