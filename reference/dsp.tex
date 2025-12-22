@@ -92,17 +92,17 @@ where $R_n$ is the $n$-th order elliptic rational function (also known as the Ch
 
 \section{Pole-Zero Placement}
 
-This design method involves direct placement of the poles and zeros in the $z$-plane to meet an arbitrary frequency repsonse specification.
+This design method involves direct placement of the poles and zeros in the $z$-plane to meet an arbitrary frequency response specification.
 
 \section{Complex Coefficients}
 
 \section{CAD}
 
-This is a practical method for designing IIR digital filters with aribitrary, prescribed magnitude characteristics.
+This is a practical method for designing IIR digital filters with arbitrary, prescribed magnitude characteristics.
 
 \chapter[FIR Digital Filter Design]{Finite Impulse Response Digital Filter Design}
 
-A finite impule response (FIR) filter is characterized by an impulse response of finite duration. An FIR filter may also be called a nonrecursive, moving average, transveral or tapped delay line filter. Let us consider the design techniques for FIR digital filters. These filters can be efficiently implemented in the frequency domain, but we will consider the time domain implementation of the FIR filter. These filters are usually solving by using Fourier series or numerical analysis techniques.
+A finite impulse response (FIR) filter is characterized by an impulse response of finite duration. An FIR filter may also be called a nonrecursive, moving average, transversal or tapped delay line filter. Let us consider the design techniques for FIR digital filters. These filters can be efficiently implemented in the frequency domain, but we will consider the time domain implementation of the FIR filter. These filters are usually solving by using Fourier series or numerical analysis techniques.
 
 A disadvantage of FIR filters is that they must be higher order to achieve a specified magnitude response (as compared to IIR filters). Some characteristics (advantages) of FIR filters are
 \begin{itemize}
@@ -110,7 +110,7 @@ A disadvantage of FIR filters is that they must be higher order to achieve a spe
 	\item FIR filters realized nonrecursively are inherently stable
 	\item Quantization noise can be negligible for nonrecursive realizations
 	\item Coefficient accuracy problems inherent in sharp cutoff can be less severe
-	\item FIR filters canbe efficiently implemented in multirate DSP systems
+	\item FIR filters can be efficiently implemented in multirate DSP systems
 \end{itemize}
 
 The transfer function of an FIR causal filter is
@@ -193,7 +193,7 @@ For $N$-odd we obtain
 		&=z^{-(N-1)/2}\left[h_d(0)+\sum_{n=1}^{(N-1)/2}{h_d(n)(z^n+z^{-n})}\right]
 	\end{split}
 \end{equation}
-A technique for the design of FIR digital fitlers is to multiply the desired impulse response $h_d(n)$ by a window function $a(n)$. (Window functions are a class of time-domain functions.)
+A technique for the design of FIR digital filters is to multiply the desired impulse response $h_d(n)$ by a window function $a(n)$. (Window functions are a class of time-domain functions.)
 \begin{equation}
 	h(n)=h_d(n)a(n)
 \end{equation}
@@ -440,7 +440,7 @@ If the process is assumed to be WSS, the ACF depends only on the time difference
 \begin{equation}
 	\phi_{yy}(m)=\sum_{i=-\infty}^\infty\sum_{j=-\infty}^\infty{h(i)h(i+j)\phi_{xx}(m-j)}
 \end{equation}
-The CCF of two discrete-time random proceses $x(n)$ and $y(n)$ that are jointly WSS RPs is
+The CCF of two discrete-time random processes $x(n)$ and $y(n)$ that are jointly WSS RPs is
 \begin{equation}
 	\phi_{xy}(m)=E[x(n)y(n+m)]
 \end{equation}
@@ -448,7 +448,7 @@ The CCF of the input $x(n)$ and response $y(n)$ of a discrete-time linear system
 \begin{equation}
 	\phi_{xy}(m)=\sum_{j=-\infty}^\infty{h(j)\phi_{xx}(m-j)}
 \end{equation}
-The autocovariance (ACVF) and cross-covariance (CCVF) functoins of two stationary RP $x(n)$ and $y(n)$ are given by
+The autocovariance (ACVF) and cross-covariance (CCVF) functions of two stationary RP $x(n)$ and $y(n)$ are given by
 \begin{align}
 	\gamma_{xx}(m)&=E\{[x(n)-m_x][(x(n+m)+m_x)]\}=\phi_{xx}(m)-m^2_x\\
 	\gamma_{xy}(m)&=E\{[x(n)-m_x][(y(n+m)-m_y)]\}=\phi_{xy}(m)-m_xm_y
@@ -479,12 +479,12 @@ For a linear system with response $y(n)$, input $x(n)$ and impulse response $h(n
 	\mathbf{\Phi}_{yy}(z)&=H(z)H(z^{-1})\mathbf{\Phi}_{xx}(z)\\
 	P_{yy}(f)&=\mathbf{\Phi}_{yy}(e^{j2{\pi}fT})=|H(e^{j2{\pi}fT})|\mathbf{\Phi}_{xx}(e^{j2{\pi}fT})
 \end{align}
-This says that hte the PSD of the output process of a discrete-time linear system is equal to the PSD of the input process times the squared magnitude response of the system. We can then show that the CPSD is
+This says that the the PSD of the output process of a discrete-time linear system is equal to the PSD of the input process times the squared magnitude response of the system. We can then show that the CPSD is
 \begin{align}
 	\mathbf{\Phi}_{xy}(z)&=H(z)\mathbf{\Phi}_{xx}(z)\\
 	P_{xy}(f)&=H(e^{j2{\pi}fT})\mathbf{\Phi}_{xx}(e^{j2{\pi}fT})=H(e^{j2{\pi}fT})P_{xx}(f)
 \end{align}
-Consider two linear time-invariant systems with outputs $v(nT)$ and $w(nT)$, respectively, inputs $x(nT)$ and $y(nT)$, respsectively, and impulse responses $h_1(n)$ and $h_2(n)$, respectively. The CPSD is given by
+Consider two linear time-invariant systems with outputs $v(nT)$ and $w(nT)$, respectively, inputs $x(nT)$ and $y(nT)$, respectively, and impulse responses $h_1(n)$ and $h_2(n)$, respectively. The CPSD is given by
 \begin{equation}
 	\mathbf{\Phi}_{vw}(z)=H_1(z)H_2(z^{-1})\mathbf{\Phi}_{xy}(z)
 \end{equation}
@@ -496,7 +496,7 @@ The ACF and PSD of white noise are expressed by
 	\phi_{xx}(m)&=\sigma_x^2\delta(m)\\
 	P_{xx}(f)&=\mathbf{\Phi}_{xx}(e^{j2{\pi}fT})=\sigma_x^2
 \end{align}
-Therefore, the response of a digital fitler to a white-noise input is
+Therefore, the response of a digital filter to a white-noise input is
 \begin{equation}
 	P_{yy}(f)=\sigma_x^2|H(e^{j2{\pi}fT})|^2
 \end{equation}
@@ -504,7 +504,7 @@ With an input with zero mean and the variance (second moment) $\sigma_x^2$, the 
 \begin{equation}
 	\sigma_y^2=\sigma_x^2\sum_{n=0}^{\infty}{h^2(n)}
 \end{equation}
-Suppose that we would like to determine the average output power of a filter to a white-noise random process with zero mean and variance $\sigma_x^2$. For the ACF with $m=0$, we find the avaerage power in the input is
+Suppose that we would like to determine the average output power of a filter to a white-noise random process with zero mean and variance $\sigma_x^2$. For the ACF with $m=0$, we find the average power in the input is
 \begin{equation}
 	\phi_{xx}(0)=E[x^2(n)]=\frac{1}{2{\pi}j}\oint_c{\mathbf{\Phi}_{xx}(z)z^{m-1}\,dz}=\sigma_x^2
 \end{equation}
@@ -539,9 +539,44 @@ The error analysis presented herein will concentrate primarily on fixed-point ar
 
 \section{Quantization Noise Introduced by Analog-to-Digital Conversion}
 
-\chapter{Signal Processing in System Design}
+\chapter{Signal Processing System Design}
+
+\begin{center}
+\textit{"Our signal processing system design methodology provides a systematic approach to specifying requirements, analyzing signals, and developing signal processing designs. The methodology results in efficient signal processing hardware and software implementations."}
+\end{center}
+\vspace{1em}
+\setcounter{section}{-1}
+\section{Introduction}
+The digital signal processing (DSP) techniques presented in the preceding chapter have application to many diverse fields such as acoustics, radar, sonar, seismology, speech, data communication, and biomedical engineering. This chapter presents a DSP system design methodology and illustrates the use of the methodology in solving DSP system application problems. The methodology uses design and analysis approaches discussed in the preceding chapters. Implementation of the methodologies using computer-aided design and analysis tools provide an efficient approach to handling complex application designs.
 
 \chapter{Adaptive Filtering}
+\begin{center}
+\textit{"Filters that adapt to a changing environment are discussed. The stochastic Wiener filtering and deterministic least-squares problems are set up, and the similarity between them is pointed out. First, a block-processing approach is taken in the solution to these two problems. Second, a fading memory (recursive) approach is taken. Then the application of these algorithms to the adaptive beamforming (ABF) problem is considered. The chapter appendix provides background material on conventional beamforming (CBF)."}
+\end{center}
+\vspace{1em}
+\setcounter{section}{-1}
+\section{Introduction}
+Numerous applications exist that require a linear filtering operation. Often, the nature of that filtering task is time-varying in some nondeterministic fashion owing to nonstationarity of the underlying time series. In such situations, a filter that can adapt to a changing environment is needed. Examples include adaptive noise canceling, line enhancing, frequency tracking, and channel equalization. Beyond the discussion here, additional material on adaptive filtering can be found in references 1 through 16.
+
+\section{The Stochastic Wiener Filtering and Deterministic Least Squares Problem}
+The problem of interest is described in Figure 11.1. The goal is to filter the time series $x[n]$ with a causal, finite impulse response (FIR) digital filter to yield an estimate of the time series $s[n]$. The error in that estimate is denoted $e[n]$
+\begin{equation}
+	e[n]=s[n]-\hat{s}[n]=s[n]+\sum_{k=0}^N{h_kx[n-k]}
+\end{equation}
+Written in matrix form, Eq. 11.1 becomes
+\begin{equation}
+	e[n]=s[n]+[h_0\,h_1\,\dots\,h_N]
+	\begin{bmatrix}
+		x[n]\\
+		x[n-1]\\
+		\vdots\\
+		x[n-N]
+	\end{bmatrix}
+\end{equation}
+or, in vector notation,
+\begin{equation}
+	e[n]=s[n]+\mathbf{h}^T\mathbf{x}
+\end{equation}
 
 \backmatter
 
