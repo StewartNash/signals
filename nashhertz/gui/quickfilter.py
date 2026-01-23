@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-from nashhertz.gui.utilities import TableView
+from nashhertz.gui.utilities import TableView, Chart, CodeView
 
 class QuickFilter:
     def __init__(self):
@@ -63,13 +63,22 @@ class QuickFilterForm(ttk.Frame):
         self.topologies_label = tk.Label(self.right_middle_frame, text="Topologies: ")
         self.topologies_listbox = tk.Listbox(self.right_middle_frame)
         
+        self.left_lower_frame = ttk.Frame(self.lower_frame)
+        self.right_lower_frame = ttk.Frame(self.lower_frame)
+        self.demo_text = CodeView(self.left_lower_frame)
+        self.results_chart = Chart(self.right_lower_frame)
+        
         self.topologies_label.pack()
         self.topologies_listbox.pack()
         self.general_requirements_tableview.pack(side=tk.LEFT)
         self.specific_requirements_tableview.pack()
+        self.demo_text.pack()
+        self.results_chart.pack()
         
         self.left_middle_frame.pack(side=tk.LEFT)
         self.right_middle_frame.pack(side=tk.LEFT)
+        self.left_lower_frame.pack(side=tk.LEFT)
+        self.right_lower_frame.pack(side=tk.LEFT)
         
         self.lowpass_button.pack(side=tk.LEFT)
         self.highpass_button.pack(side=tk.LEFT)

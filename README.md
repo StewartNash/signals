@@ -34,6 +34,10 @@ The 'noise_response' module contains examples and abstract implementations of ar
 
 The 'truncation_effects' module contains examples and abstract implementations examining the effect of finite register lengths.
 
+## SDR
+
+The 'sdr' folder contains examples from 'Software Defined Radio using MATLAB & Simulink and the RTL-SDR' by Bob Stewart et al. The examples have been translated from MATLAB to Python. (ASIDE: I may transfer these files to a separate SDR repository in the future. I am not sure if it should be integrated with this repository. Though I could imagine it calling this repository extensively as a library. I am not sure what to do about Simulink translations. This may require a separate library. But I had a controls library that I was working on that may be able to hold this. For now, I think I may just make rudimentary block in Python to cobble the Simulink functionality together.)
+
 ## Unit testing
 
 ```
