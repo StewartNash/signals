@@ -6,40 +6,126 @@ import math
 class TableView(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
-        
-        # Define the table columns
-        columns = ("Requirements", "Value", "Unit")
-        # Create Treeview widget
-        tree = ttk.Treeview(self, columns=columns, show='headings')
-        # Define column properties (headers and width)
-        tree.heading("Requirements", text="Requirements")
-        tree.heading("Value", text="Value")
-        tree.heading("Unit", text="Unit")
-        
-        tree.column("Requirements", width=150, anchor='center')
-        tree.column("Value", width=50, anchor='w')
-        tree.column("Unit", width=100, anchor='center')
-        
-        # Add sample data to Treeview
+
+        self.columns = ("Requirements", "Value", "Unit")
+
+        self.tree = ttk.Treeview(
+            self,
+            columns=self.columns,
+            show="headings",
+            selectmode="browse"
+        )
+
+        for col in self.columns:
+            self.tree.heading(col, text=col)
+            self.tree.column(col, anchor="center", width=150)
+        self.tree.column("Value", width=80)
+        self.tree.tag_configure("odd", background="#f4f4f4")
+        self.tree.tag_configure("even", background="#ffffff")
+
+        # Sample data
         data = [
             ("Passband Attenuation", 30, "dB"),
             ("Stopband Attenuation", 40, "dB"),
             ("Impedance", 50, "Ohms"),
-            ("Inductor Q", float('inf'), "None"),
-            ("Capacitor Q", float('inf'), "None")
+            ("Inductor Q", float('inf'), ""),
+            ("Capacitor Q", float('inf'), "")
         ]
-        for row in data:
-            tree.insert("", tk.END, values=row)
+        
+        #for row in data:
+        #    self.tree.insert("", tk.END, values=row)
+        for i, row in enumerate(data):
+            tag = "even" if i % 2 == 0 else "odd"
+            self.tree.insert("", tk.END, values=row, tags=(tag,))
+
+        # Scrollbar
+        scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.tree.yview)
+        self.tree.configure(yscrollcommand=scrollbar.set)
+
+        self.tree.grid(row=0, column=0, sticky="nsew")
+        scrollbar.grid(row=0, column=1, sticky="ns")
+
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
+        # Bind editing events
+        self.tree.bind("<Double-1>", self._begin_edit)
+
+        self.editor = None
+        self.unit_editor = ttk.Combobox(
+            self,
+            values=("dB", "Hz", "Ohms", "None"),
+            state="readonly"
+        )
+        self.unit_editor.place_forget()
+
+
+    # -----------------------------
+    # Cell Editing
+    # -----------------------------
+    def _begin_edit(self, event):
+        region = self.tree.identify("region", event.x, event.y)
+        if region != "cell":
+            return
+
+        row_id = self.tree.identify_row(event.y)
+        column = self.tree.identify_column(event.x)
+
+        if not row_id or not column:
+            return
             
-        # Add vertical scrollbar
-        scrollbar = ttk.Scrollbar(self, orient=tk.VERTICAL, command=tree.yview)
-        tree.configure(yscroll=scrollbar.set)
-        # Layout Treeview and scrollbar
-        tree.grid(row=0, column=0, sticky='nsew')
-        scrollbar.grid(row=0, column=1, sticky='ns')
-        ## Allow table resizing with window
-        #self.grid_rowconfigure(0, weight=1)
-        #self.grid_columnconfigure(0, weight=1)
+        if column == "#3":
+            x, y, width, height = self.tree.bbox(row_id, column)
+
+            current_value = self.tree.set(row_id, "Unit")
+            self.unit_editor.set(current_value)
+
+            self.unit_editor.place(
+                x=x,
+                y=y,
+                width=width,
+                height=height
+            )
+
+            self.unit_editor.focus()
+            self.editing_row = row_id
+
+            def save_unit(event=None):
+                new_value = self.unit_editor.get()
+                self.tree.set(self.editing_row, "Unit", new_value)
+                self.unit_editor.place_forget()
+            
+            self.unit_editor.bind("<<ComboboxSelected>>", save_unit)
+            self.unit_editor.bind("<FocusOut>", save_unit)
+        else:
+            col_index = int(column[1:]) - 1
+            x, y, width, height = self.tree.bbox(row_id, column)
+
+            value = self.tree.item(row_id, "values")[col_index]
+
+            # Create editor
+            self.editor = ttk.Entry(self.tree)
+            self.editor.insert(0, value)
+            self.editor.select_range(0, tk.END)
+            self.editor.focus()
+
+            self.editor.place(x=x, y=y, width=width, height=height)
+
+            def save_edit(event=None):
+                new_value = self.editor.get()
+                values = list(self.tree.item(row_id, "values"))
+                values[col_index] = new_value
+                self.tree.item(row_id, values=values)
+                self.editor.destroy()
+                self.editor = None
+
+            def cancel_edit(event=None):
+                self.editor.destroy()
+                self.editor = None
+
+            self.editor.bind("<Return>", save_edit)
+            self.editor.bind("<FocusOut>", save_edit)
+            self.editor.bind("<Escape>", cancel_edit)
 
 class CodeView(ttk.Frame):
     def __init__(self, parent):
