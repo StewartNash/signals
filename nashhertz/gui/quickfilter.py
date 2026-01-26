@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from nashhertz.gui.utilities import TableView, Chart, CodeView
+from signal_processor.filter import FilterType, FilterWindow, Filter
 
 class QuickFilter:
     def __init__(self):
