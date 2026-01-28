@@ -2,11 +2,24 @@ import tkinter as tk
 from tkinter import ttk
 
 from nashhertz.gui.utilities import TableView, Chart, CodeView
-from signal_processor.filter import FilterType, FilterWindow, Filter
+from signal_processor.filter import FilterType, FilterWindow, Filter, FilterFamily
 
 class QuickFilter:
     def __init__(self):
-        pass
+        self.filter = self.initialize_filter()
+        
+    def initialize_filter(self):
+        filter = Filter()
+        filter_specifications = {"type" : FilterType.LOWPASS,
+            "family" : FilterFamily.BUTTERWORTH,
+            "passband attenuation" : 3.01, # dB
+            "stopband attenuation" : 40, # dB
+            "impedance" : 50, # Ohms
+            "passband frequency" : 1, # GHz
+            "stopband frequency" : 2, # GHz
+        }
+        filter.set_parameters(filter_specifications)
+        return filter
 
 class QuickFilterForm(ttk.Frame):
     def __init__(self, parent, model=None):

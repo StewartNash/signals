@@ -104,7 +104,7 @@ class FilterWindow(enum.Enum):
 
 class Filter:
 	def __init__(self):
-		#self.family = None
+		self.family = None
 		self.type = None
 		self.passband_frequency_low = None
 		self.passband_frequency_high = None
@@ -144,7 +144,22 @@ class Filter:
 	def get_parameter_descriptions(self):
 		pass
 		
-	def set_parameters(self, input_parameters):
-		pass
+	def set_parameters(self, filter_parameters):
+	    if "type" in filter_parameters:
+	        self.type = filter_parameters["type"]
+	    if "family" in filter_parameters:
+	        self.family = filter_parameters["family"]
+	    if "stopband_attenuation" in filter_parameters:
+	        self.stopband_attenuation = filter_parameters["stopband attenuation"]
+	    if "passband_attenuation" in filter_parameters:
+	        self.specified_passband_ripple = filter_parameters["passband attenuation"]
+	    if self.type is FilterType.LOWPASS:
+	        if "passband frequency" in filter_parameters:
+	            self.passband_frequency_high = filter_parameters["passband frequency"]
+	            self.passband_frequency_low = 0
+	        if "stopband frequency" in filter_parameters:
+	            self.stopband_frequency_low = filter_parameters["stopband frequency"]
+	            self.stopband_frequency_high = float('inf')
+	    
 		
 
