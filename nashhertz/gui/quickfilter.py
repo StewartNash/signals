@@ -10,7 +10,8 @@ class QuickFilter:
         
     def initialize_filter(self):
         filter = Filter()
-        filter_specifications = {"type" : FilterType.LOWPASS,
+        filter_specifications = {
+            "type" : FilterType.LOWPASS,
             "family" : FilterFamily.BUTTERWORTH,
             "passband attenuation" : 3.01, # dB
             "stopband attenuation" : 40, # dB
@@ -20,6 +21,10 @@ class QuickFilter:
         }
         filter.set_parameters(filter_specifications)
         return filter
+        
+    def graph_filter(self):
+        pass        
+    
 
 class QuickFilterForm(ttk.Frame):
     def __init__(self, parent, model=None):
@@ -138,3 +143,6 @@ class QuickFilterForm(ttk.Frame):
         self.upper_frame.pack()
         self.middle_frame.pack()
         self.lower_frame.pack()
+        
+    def update_form(self):
+        pass
