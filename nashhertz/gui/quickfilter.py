@@ -4,9 +4,36 @@ from tkinter import ttk
 from nashhertz.gui.utilities import TableView, Chart, CodeView
 from signal_processor.filter import FilterType, FilterWindow, Filter, FilterFamily
 
+
+class FilterPlotView(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        self.upper_frame = ttk.Frame(self)
+        self.chart = Chart(self)
+        
+        self.upper_frame.pack()
+        self.chart.pack()
+        
+    def update(self, filter):
+        pass
+
+
 class QuickFilter:
     def __init__(self):
         self.filter = self.initialize_filter()
+        self._observers = []
+        
+    def add_observer(self, function):
+        self._observers.append(function)
+        
+    def notify(self):
+        for function in self._observers:
+            function(self.filter)
+            
+    def update(self, parameters):
+        self.filter.set_parameters(parameters)
+        self.notify()
         
     def initialize_filter(self):
         filter = Filter()
@@ -27,12 +54,17 @@ class QuickFilter:
     
 
 class QuickFilterForm(ttk.Frame):
-    def __init__(self, parent, model=None):
+    def __init__(self, parent):
         super().__init__(parent)
-        self.model = model
-        if not self.model:
-            self.model = QuickFilter()
         self.create_form()
+        self.controller = None
+        
+    def set_controller(self, controller):
+        self.controller = controller
+        
+    def on_change(self):
+        parameters = self.read_form()
+        self.controller.update_filter(parameters)
         
     def create_form(self):
         self.upper_frame = ttk.Frame(self)
@@ -85,7 +117,8 @@ class QuickFilterForm(ttk.Frame):
         self.left_lower_frame = ttk.Frame(self.lower_frame)
         self.right_lower_frame = ttk.Frame(self.lower_frame)
         self.demo_text = CodeView(self.left_lower_frame)
-        self.results_chart = Chart(self.right_lower_frame)
+        #self.results_chart = Chart(self.right_lower_frame)
+        self.results_chart = FilterPlotView(self.right_lower_frame)
         
         self.topologies_label.pack()
         self.topologies_listbox.pack()
@@ -146,3 +179,19 @@ class QuickFilterForm(ttk.Frame):
         
     def update_form(self):
         pass
+        
+
+class QuickFilterController:
+    def __init__(self, model, form, plot):
+        self.model = model
+        self.form = form
+        self.plot = plot
+        
+        self.form.set_controller(self)
+        
+    def update_filter(self, parameters):
+        self.model.filter.set_parameters(parameters)
+        self.plot.update(self.model.filter)
+        
+
+

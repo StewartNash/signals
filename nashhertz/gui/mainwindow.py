@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-from nashhertz.gui.quickfilter import QuickFilterForm
+from nashhertz.gui.quickfilter import QuickFilter, QuickFilterForm, QuickFilterController
 from nashhertz.gui.advanced import AdvancedForm
 
 class MainWindow(tk.Tk):
@@ -13,9 +13,19 @@ class MainWindow(tk.Tk):
         self.main_frame = ttk.Frame(self)
         self.main_frame.pack(fill='both', expand=True)
         self.forms = {}
+        self.models = {}
+        self.controllers = {}
+        
+        self.models['QuickFilter'] = QuickFilter()
         
         self.forms['QuickFilter'] = QuickFilterForm(self.main_frame)
         self.forms['Advanced'] = AdvancedForm(self.main_frame)
+        
+        self.controllers['QuickFilter'] = QuickFilterController(
+            self.models['QuickFilter'],
+            self.forms['QuickFilter'],
+            self.forms['QuickFilter'].results_chart
+        )
         
         for form in self.forms.values():
             form.grid(row=0, column=0, sticky='NSEW')
