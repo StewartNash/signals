@@ -5,9 +5,10 @@ This is a signal processing library. It contains signal processing algorithms. C
 ## NashHertz Filters
 
 This package contains a filter design application. In order to run, issue the following command:
-'''
+```
 user@computer:~/signal_processor$ python3 -m nashhertz.main
-'''
+```
+
 This application will be segregated to its own repository in the future.
 
 ## Infinite Impulse Response

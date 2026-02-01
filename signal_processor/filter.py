@@ -93,13 +93,13 @@ class FilterType(enum.Enum):
 
 
 class FilterWindow(enum.Enum):
-    NONE = 0
-    TRIANGULAR = 1 # p. 264
-    HANN = 2 # (HANNING) p. 267
-    RECTANGULAR = 1 # p. 205
-    HAMMING = 2 # pp. 206, 269
-    BLACKMAN = 3 # (BLACKMAN_HARRIS) pp. 206, 270
-    KAISER = 4 #   (KAISER_BESSEL) pp. 207, 271
+	NONE = 0
+	TRIANGULAR = 1 # p. 264
+	HANN = 2 # (HANNING) p. 267
+	RECTANGULAR = 1 # p. 205
+	HAMMING = 2 # pp. 206, 269
+	BLACKMAN = 3 # (BLACKMAN_HARRIS) pp. 206, 270
+	KAISER = 4 #   (KAISER_BESSEL) pp. 207, 271
 
 
 class Filter:
@@ -145,21 +145,21 @@ class Filter:
 		pass
 		
 	def set_parameters(self, filter_parameters):
-	    if "type" in filter_parameters:
-	        self.type = filter_parameters["type"]
-	    if "family" in filter_parameters:
-	        self.family = filter_parameters["family"]
-	    if "stopband attenuation" in filter_parameters:
-	        self.minimum_stopband_attenuation = filter_parameters["stopband attenuation"]
-	    if "passband attenuation" in filter_parameters:
-	        self.specified_passband_ripple = filter_parameters["passband attenuation"]
-	    if self.type is FilterType.LOWPASS:
-	        if "passband frequency" in filter_parameters:
-	            self.passband_frequency_high = filter_parameters["passband frequency"]
-	            self.passband_frequency_low = 0
-	        if "stopband frequency" in filter_parameters:
-	            self.stopband_frequency_low = filter_parameters["stopband frequency"]
-	            self.stopband_frequency_high = float('inf')
-	    
+		if "type" in filter_parameters:
+			self.type = filter_parameters["type"]
+		if "family" in filter_parameters:
+			self.family = filter_parameters["family"]
+		if "stopband attenuation" in filter_parameters:
+			self.minimum_stopband_attenuation = filter_parameters["stopband attenuation"]
+		if "passband attenuation" in filter_parameters:
+			self.specified_passband_ripple = filter_parameters["passband attenuation"]
+		if self.type is FilterType.LOWPASS:
+			if "passband frequency" in filter_parameters:
+				self.passband_frequency_high = filter_parameters["passband frequency"]
+				self.passband_frequency_low = 0
+			if "stopband frequency" in filter_parameters:
+				self.stopband_frequency_low = filter_parameters["stopband frequency"]
+				self.stopband_frequency_high = float('inf')
+
 		
 

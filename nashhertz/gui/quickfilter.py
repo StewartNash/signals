@@ -5,7 +5,7 @@ import numpy as np
 
 from nashhertz.gui.utilities import TableView, Chart, CodeView
 from signal_processor.filter import FilterType, FilterWindow, FilterFamily
-from signal_processor.analog import AnalogFilter
+from signal_processor.analog import ButterworthFilter, ChebyshevFilter, AnalogFilter
 
 
 class FilterPlotView(ttk.Frame):
@@ -43,7 +43,7 @@ class QuickFilter:
         self.notify()
         
     def initialize_filter(self):
-        filter = AnalogFilter()
+        filter = ButterworthFilter()
         filter_specifications = {
             "type" : FilterType.LOWPASS,
             "family" : FilterFamily.BUTTERWORTH,
@@ -224,6 +224,12 @@ class QuickFilterController:
         self.model.notify()
         
     def update_filter(self, parameters):
+        if parameters["family"] == FilterFamily.BUTTERWORTH:
+            self.model.filter = ButterworthFilter()
+        elif parameters["family"] == FilterFamily.CHEBYSHEV:
+            self.model.filter = ChebyshevFilter()
+        else:
+            self.model.filter = AnalogFilter()
         self.model.filter.set_parameters(parameters)
         graph_settings = {}
         graph_settings['frequency'] = self.model.frequencies

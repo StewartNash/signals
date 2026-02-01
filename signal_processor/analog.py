@@ -1,4 +1,5 @@
 import math
+from abc import ABC, abstractmethod
 
 from signal_processor.filter import FilterType, FilterWindow, Filter, FilterFamily
 
@@ -36,34 +37,6 @@ def bessel_filter_order(filter_type,
 	specified_passband_ripple,
 	minimum_stopband_attenuation):
 
-	#transition_bandwidth_low  = abs(passband_frequency_high - stopband_frequency_high)
-	#transition_bandwidth_high = abs(passband_frequency_low - stopband_frequency_low)
-	#
-	#if filter_type == FilterType.LOWPASS:
-	#	transition_bandwidth = transition_bandwidth_low
-	#elif filter_type == FilterType.HIGHPASS:
-	#	transition_bandwidth = transition_bandwidth_high
-	#elif filter_type in (FilterType.BANDPASS, FilterType.BANDSTOP):
-	#	transition_bandwidth = min(transition_bandwidth_low, transition_bandwidth_high)
-	#else:
-	#	raise ValueError("Unsupported filter type")
-	#
-	#delta_stopband = 10 ** (-0.05 * minimum_stopband_attenuation)
-	#delta_passband = (10 ** (0.05 * specified_passband_ripple) - 1) / (10 ** (0.05 * specified_passband_ripple) + 1)
-	#delta = min(delta_passband, delta_stopband)
-	#minimum_stopband_attenuation = -20 * math.log10(delta)
-	#
-	#if minimum_stopband_attenuation <= 21:
-	#	parameter_d = 0.9222
-	#else:
-	#	parameter_d = (minimum_stopband_attenuation - 7.95) / 14.36
-	#	
-	#filter_order = int(2 + parameter_d * sampling_frequency / transition_bandwidth)
-	#if filter_order % 2 == 0:
-	#	filter_order += 1  # Make it odd
-	#
-	#return (filter_order, delta, minimum_stopband_attenuation, parameter_d)
-
 	filter_order, parameter_epsilon = bessel_filter_coefficients(
 	    filter_type,
 	    passband_frequency_low,
@@ -77,10 +50,11 @@ def bessel_filter_order(filter_type,
 	return filter_order
 
 
-class AnalogFilter(Filter):
+class AnalogFilter(Filter, ABC):
 	def __init__(self):
 		super().__init__()
-		
+
+	@abstractmethod
 	def magnitude_response(self, frequencies, is_db=False):
 		#frequencies = []
 		magnitudes = []
@@ -100,5 +74,54 @@ class AnalogFilter(Filter):
 				magnitudes = [20 * math.log10(h) for h in magnitudes]
 
 		return (frequencies, magnitudes)
-		
 
+
+class ButterworthFilter(AnalogFilter):
+	def __init__(self):
+		super().__init__()
+
+	def magnitude_response(self, frequencies, is_db=False):
+		# frequencies = []
+		magnitudes = []
+		if self.family is FilterFamily.BUTTERWORTH:
+			filter_order, parameter_epsilon = bessel_filter_coefficients(
+				self.type,
+				self.passband_frequency_low,
+				self.passband_frequency_high,
+				self.stopband_frequency_low,
+				self.stopband_frequency_high,
+				self.specified_passband_ripple,
+				self.minimum_stopband_attenuation
+			)
+			omega_p = self.passband_frequency_high
+			magnitudes = [math.sqrt(1 / (1 + parameter_epsilon ** 2 * (omega / omega_p) ** (2 * filter_order))) for
+						  omega in frequencies]
+			if is_db:
+				magnitudes = [20 * math.log10(h) for h in magnitudes]
+
+		return (frequencies, magnitudes)
+
+class ChebyshevFilter(AnalogFilter):
+	def __init__(self):
+		super().__init__()
+
+	def magnitude_response(self, frequencies, is_db=False):
+		# frequencies = []
+		magnitudes = []
+		if self.family is FilterFamily.BUTTERWORTH:
+			filter_order, parameter_epsilon = bessel_filter_coefficients(
+				self.type,
+				self.passband_frequency_low,
+				self.passband_frequency_high,
+				self.stopband_frequency_low,
+				self.stopband_frequency_high,
+				self.specified_passband_ripple,
+				self.minimum_stopband_attenuation
+			)
+			omega_p = self.passband_frequency_high
+			magnitudes = [math.sqrt(1 / (1 + parameter_epsilon ** 2 * (omega / omega_p) ** (2 * filter_order))) for
+						  omega in frequencies]
+			if is_db:
+				magnitudes = [20 * math.log10(h) for h in magnitudes]
+
+		return (frequencies, magnitudes)
