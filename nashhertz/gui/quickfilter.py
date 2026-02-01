@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
+import numpy as np
+
 from nashhertz.gui.utilities import TableView, Chart, CodeView
 from signal_processor.filter import FilterType, FilterWindow, Filter, FilterFamily
 
@@ -21,6 +23,8 @@ class FilterPlotView(ttk.Frame):
 
 class QuickFilter:
     def __init__(self):
+        self.frequencies = []
+        self.resolution = 100
         self.filter = self.initialize_filter()
         self._observers = []
         
@@ -47,10 +51,17 @@ class QuickFilter:
             "stopband frequency" : 2, # GHz
         }
         filter.set_parameters(filter_specifications)
+        stopband_frequency = filter.stopband_frequency_low
+        passband_frequency = filter.passband_frequency_high
+        minimum_frequency = 0
+        maximum_frequency = stopband_frequency + 0.5 * (stopband_frequency - passband_frequency)
+        self.frequencies = np.linspace(minimum_frequency, maximum_frequency, self.resolution)
+        
         return filter
         
     def graph_filter(self):
-        pass        
+        #x, y = filter.frequency_response()
+        x, y = filter.magnitude_response(self.frequencies)
     
 
 class QuickFilterForm(ttk.Frame):

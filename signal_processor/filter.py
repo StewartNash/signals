@@ -151,6 +151,7 @@ class Filter:
 	        self.family = filter_parameters["family"]
 	    if "stopband_attenuation" in filter_parameters:
 	        self.stopband_attenuation = filter_parameters["stopband attenuation"]
+	        self.minimum_stopband_attenuation = self.stopband_attenuation
 	    if "passband_attenuation" in filter_parameters:
 	        self.specified_passband_ripple = filter_parameters["passband attenuation"]
 	    if self.type is FilterType.LOWPASS:
