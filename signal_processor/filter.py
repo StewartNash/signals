@@ -114,7 +114,7 @@ class Filter:
 		self.specified_passband_ripple = None
 		self.actual_passband_ripple = None
 		self.minimum_stopband_attenuation = None
-		self.stopband_attenuation = None
+		#self.stopband_attenuation = None
 
 		self.order = None
 		self.coefficients = None
@@ -149,10 +149,9 @@ class Filter:
 	        self.type = filter_parameters["type"]
 	    if "family" in filter_parameters:
 	        self.family = filter_parameters["family"]
-	    if "stopband_attenuation" in filter_parameters:
-	        self.stopband_attenuation = filter_parameters["stopband attenuation"]
-	        self.minimum_stopband_attenuation = self.stopband_attenuation
-	    if "passband_attenuation" in filter_parameters:
+	    if "stopband attenuation" in filter_parameters:
+	        self.minimum_stopband_attenuation = filter_parameters["stopband attenuation"]
+	    if "passband attenuation" in filter_parameters:
 	        self.specified_passband_ripple = filter_parameters["passband attenuation"]
 	    if self.type is FilterType.LOWPASS:
 	        if "passband frequency" in filter_parameters:

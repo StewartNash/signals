@@ -4,7 +4,8 @@ from tkinter import ttk
 import numpy as np
 
 from nashhertz.gui.utilities import TableView, Chart, CodeView
-from signal_processor.filter import FilterType, FilterWindow, Filter, FilterFamily
+from signal_processor.filter import FilterType, FilterWindow, FilterFamily
+from signal_processor.analog import AnalogFilter
 
 
 class FilterPlotView(ttk.Frame):
@@ -17,8 +18,10 @@ class FilterPlotView(ttk.Frame):
         self.upper_frame.pack()
         self.chart.pack()
         
-    def update(self, filter):
-        pass
+    def update(self, filter, graph_settings):
+        frequencies = graph_settings['frequency']
+        x, y = filter.magnitude_response(frequencies, is_db=True)
+        self.chart.plot(x, y)
 
 
 class QuickFilter:
@@ -33,22 +36,24 @@ class QuickFilter:
         
     def notify(self):
         for function in self._observers:
-            function(self.filter)
+            function()
             
     def update(self, parameters):
         self.filter.set_parameters(parameters)
         self.notify()
         
     def initialize_filter(self):
-        filter = Filter()
+        filter = AnalogFilter()
         filter_specifications = {
             "type" : FilterType.LOWPASS,
             "family" : FilterFamily.BUTTERWORTH,
             "passband attenuation" : 3.01, # dB
             "stopband attenuation" : 40, # dB
             "impedance" : 50, # Ohms
-            "passband frequency" : 1, # GHz
-            "stopband frequency" : 2, # GHz
+            #"passband frequency" : 1, # GHz
+            #"stopband frequency" : 2, # GHz
+            "passband frequency" : 1.0E9, # Hz
+            "stopband frequency" : 2.0E9, # Hz
         }
         filter.set_parameters(filter_specifications)
         stopband_frequency = filter.stopband_frequency_low
@@ -61,7 +66,7 @@ class QuickFilter:
         
     def graph_filter(self):
         #x, y = filter.frequency_response()
-        x, y = filter.magnitude_response(self.frequencies)
+        x, y = filter.magnitude_response(self.frequencies, is_db=True)
     
 
 class QuickFilterForm(ttk.Frame):
@@ -191,6 +196,22 @@ class QuickFilterForm(ttk.Frame):
     def update_form(self):
         pass
         
+    def read_form(self):
+         filter_specifications = {
+            "type" : FilterType.LOWPASS,
+            "family" : FilterFamily.BUTTERWORTH,
+            "passband attenuation" : 3.01, # dB
+            "stopband attenuation" : 40, # dB
+            "impedance" : 50, # Ohms
+            #"passband frequency" : 1, # GHz
+            #"stopband frequency" : 2, # GHz
+            "passband frequency" : 1.0E9, # Hz
+            "stopband frequency" : 2.0E9, # Hz
+        }
+        
+         return filter_specifications
+
+        
 
 class QuickFilterController:
     def __init__(self, model, form, plot):
@@ -199,10 +220,17 @@ class QuickFilterController:
         self.plot = plot
         
         self.form.set_controller(self)
+        self.model.add_observer(self.on_change)
+        self.model.notify()
         
     def update_filter(self, parameters):
         self.model.filter.set_parameters(parameters)
-        self.plot.update(self.model.filter)
+        graph_settings = {}
+        graph_settings['frequency'] = self.model.frequencies
+        self.plot.update(self.model.filter, graph_settings)
+        
+    def on_change(self):
+        self.update_filter(self.form.read_form())
         
 
 

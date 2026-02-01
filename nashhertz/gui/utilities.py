@@ -178,11 +178,10 @@ class Chart(ttk.Frame):
             bg=self.canvas_background)
         self.canvas.pack()
         
-        #TODO: Remove demonstration below
-        step_size = 0.01
-        x = [i * step_size for i in range(0, int(2 * math.pi / step_size))]
-        y = [math.sin(x_) for x_ in x]        
-        self.plot(x, y, label="sin(x)")
+        #step_size = 0.01
+        #x = [i * step_size for i in range(0, int(2 * math.pi / step_size))]
+        #y = [math.sin(x_) for x_ in x]        
+        #self.plot(x, y, label="sin(x)")
         
     def clear(self, is_redrawing=False):
         self.canvas.delete("all")
