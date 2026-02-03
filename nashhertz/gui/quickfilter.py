@@ -14,6 +14,11 @@ class FilterPlotView(ttk.Frame):
 
         self.upper_frame = ttk.Frame(self)
         self.chart = Chart(self)
+        chart_parameters = {
+            "grid vertical lines" : 5,
+            "grid horizontal lines" : 5
+        }
+        self.chart.set_parameters(chart_parameters)
         
         self.upper_frame.pack()
         self.chart.pack()

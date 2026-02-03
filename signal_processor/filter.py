@@ -144,6 +144,12 @@ class Filter:
 	def get_parameter_descriptions(self):
 		pass
 		
+	def get_poles(self, normalized=False):
+	    return []
+	    
+	def get_zeros(self, normalized=False):
+	    return []
+		
 	def set_parameters(self, filter_parameters):
 		if "type" in filter_parameters:
 			self.type = filter_parameters["type"]

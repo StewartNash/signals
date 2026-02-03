@@ -228,7 +228,8 @@ class Chart(ttk.Frame):
             x = i * delta_x
             self.canvas.create_line(x, 0, x, self.canvas_height, fill=self.grid_color, dash=(2, 2))
             self.canvas.create_text(x, self.canvas_height - 10,
-                text =f"{inverse_transform_x(x, maximum_x, minimum_x, self.canvas_width):.1f}",
+                #text =f"{inverse_transform_x(x, maximum_x, minimum_x, self.canvas_width):.1f}",
+                text =f"{inverse_transform_x(x, maximum_x, minimum_x, self.canvas_width):.2e}",
                 fill=self.grid_color,
                 font=(self.grid_family, self.grid_font))
 
@@ -325,4 +326,10 @@ class Chart(ttk.Frame):
             label = plot_[2]
             color = plot_[3]
             self.plot(x, y, label=label, color=color, is_redrawing=True)
+            
+    def set_parameters(self, parameters):
+        if "grid vertical lines" in parameters:
+            self.grid_vertical_lines = parameters["grid vertical lines"]
+        if "grid horizontal lines" in parameters:
+            self.grid_horizontal_lines = parameters["grid horizontal lines"]
        
