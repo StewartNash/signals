@@ -194,25 +194,26 @@ def remez_simple(numtaps, bands, desired, weight=None, grid_density=16, max_iter
     h = np.concatenate([a[::-1], a[1:]])  # symmetric impulse response
     return h, grid, D, E
 
+##TODO: Fix below
+if __name__ == "__main__":
+    # Example: low-pass filter
+    numtaps = 20
+    bands = [0, 0.3, 0.4, 1.0]  # normalized frequencies (0–1 mapped to 0–π)
+    desired = [1, 0]
+    weights = [1, 10]
 
-# Example: low-pass filter
-numtaps = 20
-bands = [0, 0.3, 0.4, 1.0]  # normalized frequencies (0–1 mapped to 0–π)
-desired = [1, 0]
-weights = [1, 10]
+    h, w, D, E = remez_simple(numtaps, bands, desired, weights)
 
-h, w, D, E = remez_simple(numtaps, bands, desired, weights)
+    # Plot result
+    H = np.fft.fft(h, 4096)
+    freqs = np.linspace(0, np.pi, len(H)//2)
+    plt.figure(figsize=(8,4))
+    plt.plot(freqs/np.pi, 20*np.log10(np.abs(H[:len(H)//2])))
+    plt.title("Simplified Parks–McClellan FIR Design")
+    plt.xlabel("Normalized Frequency (×π rad/sample)")
+    plt.ylabel("Magnitude (dB)")
+    plt.grid(True)
+    plt.show()
 
-# Plot result
-H = np.fft.fft(h, 4096)
-freqs = np.linspace(0, np.pi, len(H)//2)
-plt.figure(figsize=(8,4))
-plt.plot(freqs/np.pi, 20*np.log10(np.abs(H[:len(H)//2])))
-plt.title("Simplified Parks–McClellan FIR Design")
-plt.xlabel("Normalized Frequency (×π rad/sample)")
-plt.ylabel("Magnitude (dB)")
-plt.grid(True)
-plt.show()
-
-## END PARKS-MCCLELLAN
+    ## END PARKS-MCCLELLAN
 

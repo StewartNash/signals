@@ -68,10 +68,6 @@ class QuickFilter:
         self.frequencies = np.linspace(minimum_frequency, maximum_frequency, self.resolution)
         
         return filter
-        
-    def graph_filter(self):
-        #x, y = filter.frequency_response()
-        x, y = filter.magnitude_response(self.frequencies, is_db=True)
     
 
 class QuickFilterForm(ttk.Frame):
