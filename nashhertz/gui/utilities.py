@@ -175,7 +175,7 @@ class Chart(ttk.Frame):
 
 		self.canvas = tk.Canvas(self,
 			width=self.canvas_width,
-			heigh=self.canvas_height,
+			height=self.canvas_height,
 			bg=self.canvas_background)
 		self.canvas.pack()
 

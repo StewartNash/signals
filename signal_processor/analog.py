@@ -176,3 +176,28 @@ class ChebyshevFilter(AnalogFilter):
 			magnitudes = [20 * math.log10(h) for h in magnitudes]
 
 		return (frequencies, magnitudes)
+
+	def get_poles(self, normalized=False):
+		poles = []
+		filter_order, parameter_epsilon = chebyshev_filter_coefficients(
+			self.type,
+			self.passband_frequency_low,
+			self.passband_frequency_high,
+			self.stopband_frequency_low,
+			self.stopband_frequency_high,
+			self.specified_passband_ripple,
+			self.minimum_stopband_attenuation
+		)
+		N = filter_order
+		x = [(2 * k - 1) * math.pi / (2 * N) for k in range(1, 1 + N)]
+		y = math.asinh(1 / parameter_epsilon) / N
+		poles = [(-math.sin(x_) * math.sinh(y), math.cos(x_) * math.cosh(y)) for x_ in x]
+		poles = poles + [(-math.sin(x_) * math.sinh(y), math.cos(x_) * math.cosh(y)) for x_ in x]
+		#y = [math.asinh(1 / parameter_epsilon) / N, -math.asinh(1 / parameter_epsilon) / N]
+		#poles = [[(-math.sin(x_) * math.sinh(y_), math.cos(x_) * math.cosh(y_)) for x_ in x] for y_ in y]
+		if not normalized:
+			omega_p = self.passband_frequency_high
+			poles = [(s[0] * omega_p, s[1] * omega_p) for s in poles]
+		# poles	= [s * omega_p for s in poles]
+
+		return poles
