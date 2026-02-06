@@ -213,7 +213,7 @@ __marimo__/
 #######################################
 ### PyCharm                         ###
 ### Doesn't really work, so adding: ###
-./idea
+.idea/
 #######################################
 
 # Covers JetBrains IDEs: IntelliJ, GoLand, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider

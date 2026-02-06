@@ -75,9 +75,29 @@ class QuickFilterForm(ttk.Frame):
         super().__init__(parent)
         self.create_form()
         self.controller = None
-        
+
+        # Sample data
+        data = [
+            ("passband attenuation", 3.01, "dB"),
+            ("stopband attenuation", 40, "dB"),
+            ("impedance", 50, "Ohms"),
+            ("inductor Q", float('inf'), ""),
+            ("capacitor Q", float('inf'), "")
+        ]
+        self.specific_requirements_tableview.set_parameters(data)
+        self.general_requirements_tableview.set_parameters(data)
+
+    @classmethod
+    def list_to_dictionary(cls, parameters):
+        return {
+            name: value
+            for name, value, unit in parameters
+        }
+
     def set_controller(self, controller):
         self.controller = controller
+        self.specific_requirements_tableview.set_controller(controller)
+        self.general_requirements_tableview.set_controller(controller)
         
     def on_change(self):
         parameters = self.read_form()
@@ -197,32 +217,64 @@ class QuickFilterForm(ttk.Frame):
     def update_form(self):
         pass
         
-    def read_form(self):
-         filter_specifications = {
+    #def read_form(self):
+    #     filter_specifications = {
+    #        "type" : FilterType.LOWPASS,
+    #        "family" : FilterFamily.BUTTERWORTH,
+    #        "passband attenuation" : 3.01, # dB
+    #        "stopband attenuation" : 40, # dB
+    #        "impedance" : 50, # Ohms
+    #        #"passband frequency" : 1, # GHz
+    #        #"stopband frequency" : 2, # GHz
+    #        "passband frequency" : 1.0E9, # Hz
+    #        "stopband frequency" : 2.0E9, # Hz
+    #    }
+    #
+    #     return filter_specifications
+
+    def get_parameters(self):
+        parameter_list_general = self.general_requirements_tableview.get_parameters()
+        parameter_list_specific = self.specific_requirements_tableview.get_parameters()
+        parameter_dictionary_general = self.list_to_dictionary(parameter_list_general)
+        parameter_dictionary_specific = self.list_to_dictionary(parameter_list_specific)
+        filter_specifications = {
             "type" : FilterType.LOWPASS,
             "family" : FilterFamily.BUTTERWORTH,
-            "passband attenuation" : 3.01, # dB
-            "stopband attenuation" : 40, # dB
+            #"passband attenuation" : 3.01, # dB
+            #"stopband attenuation" : 40, # dB
             "impedance" : 50, # Ohms
-            #"passband frequency" : 1, # GHz
-            #"stopband frequency" : 2, # GHz
+            "passband frequency" : 1, # GHz
+            "stopband frequency" : 2, # GHz
             "passband frequency" : 1.0E9, # Hz
             "stopband frequency" : 2.0E9, # Hz
         }
-        
-         return filter_specifications
+        parameters = {}
+        for d in (
+            parameter_dictionary_general,
+            parameter_dictionary_specific,
+            filter_specifications):
+            parameters.update(d)
+
+        return parameters
 
         
 
 class QuickFilterController:
-    def __init__(self, model, form, plot):
+    def __init__(self, model, view, plot):
         self.model = model
-        self.form = form
+        self.view = view
         self.plot = plot
         
-        self.form.set_controller(self)
+        self.view.set_controller(self)
         self.model.add_observer(self.on_change)
         self.model.notify()
+
+    @classmethod
+    def list_to_dictionary(cls, parameters):
+        return {
+            name: value
+            for name, value, unit in parameters
+        }
         
     def update_filter(self, parameters):
         if parameters["family"] == FilterFamily.BUTTERWORTH:
@@ -237,7 +289,12 @@ class QuickFilterController:
         self.plot.update(self.model.filter, graph_settings)
         
     def on_change(self):
-        self.update_filter(self.form.read_form())
+        parameters = self.view.get_parameters()
+
+        self.update_filter(parameters)
+
+    #def on_change_table(self, row, column, value):
+    #    pass
         
 
 

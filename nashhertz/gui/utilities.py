@@ -5,9 +5,10 @@ import math
 
 
 class TableView(ttk.Frame):
-	def __init__(self, parent):
+	def __init__(self, parent, controller=None):
 		super().__init__(parent)
 
+		self.controller = controller
 		self.columns = ("Requirements", "Value", "Unit")
 
 		self.tree = ttk.Treeview(
@@ -17,27 +18,14 @@ class TableView(ttk.Frame):
 			selectmode="browse"
 		)
 
-		for col in self.columns:
-			self.tree.heading(col, text=col)
-			self.tree.column(col, anchor="center", width=150)
+		for column in self.columns:
+			self.tree.heading(column, text=column)
+			self.tree.column(column, anchor="center", width=150)
+
 		self.tree.column("Value", width=80)
+
 		self.tree.tag_configure("odd", background="#f4f4f4")
 		self.tree.tag_configure("even", background="#ffffff")
-
-		# Sample data
-		data = [
-			("Passband Attenuation", 30, "dB"),
-			("Stopband Attenuation", 40, "dB"),
-			("Impedance", 50, "Ohms"),
-			("Inductor Q", float('inf'), ""),
-			("Capacitor Q", float('inf'), "")
-		]
-
-		#for row in data:
-		#    self.tree.insert("", tk.END, values=row)
-		for i, row in enumerate(data):
-			tag = "even" if i % 2 == 0 else "odd"
-			self.tree.insert("", tk.END, values=row, tags=(tag,))
 
 		# Scrollbar
 		scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.tree.yview)
@@ -49,7 +37,7 @@ class TableView(ttk.Frame):
 		self.grid_rowconfigure(0, weight=1)
 		self.grid_columnconfigure(0, weight=1)
 
-		# Bind editing events
+		# Editing
 		self.tree.bind("<Double-1>", self._begin_edit)
 
 		self.editor = None
@@ -59,7 +47,6 @@ class TableView(ttk.Frame):
 			state="readonly"
 		)
 		self.unit_editor.place_forget()
-
 
 	# -----------------------------
 	# Cell Editing
@@ -96,6 +83,9 @@ class TableView(ttk.Frame):
 				self.tree.set(self.editing_row, "Unit", new_value)
 				self.unit_editor.place_forget()
 
+				if self.controller:
+					self.controller.on_change()
+
 			self.unit_editor.bind("<<ComboboxSelected>>", save_unit)
 			self.unit_editor.bind("<FocusOut>", save_unit)
 		else:
@@ -119,6 +109,8 @@ class TableView(ttk.Frame):
 				self.tree.item(row_id, values=values)
 				self.editor.destroy()
 				self.editor = None
+				if self.controller:
+					self.controller.on_change()
 
 			def cancel_edit(event=None):
 				self.editor.destroy()
@@ -127,6 +119,46 @@ class TableView(ttk.Frame):
 			self.editor.bind("<Return>", save_edit)
 			self.editor.bind("<FocusOut>", save_edit)
 			self.editor.bind("<Escape>", cancel_edit)
+
+	def on_change(self):
+		#self.controller.on_change_table()
+		self.controller.on_change()
+
+	def set_controller(self, controller):
+		self.controller = controller
+
+	def set_parameters(self, parameters):
+		"""
+		parameters: iterable of (name, value, unit)
+		"""
+		self.tree.delete(*self.tree.get_children())
+
+		for i, (name, value, unit) in enumerate(parameters):
+			tag = "even" if i % 2 == 0 else "odd"
+			self.tree.insert(
+				"",
+				tk.END,
+				values=(name, value, unit),
+				tags=(tag,)
+			)
+
+	def get_parameters(self):
+		parameters = []
+
+		for row_id in self.tree.get_children():
+			values = self.tree.item(row_id, "values")
+			name, value, unit = values
+
+			# Convert numeric strings back to numbers
+			try:
+				value = float(value)
+			except ValueError:
+				pass
+
+			parameters.append((name, value, unit))
+
+		return parameters
+
 
 class CodeView(ttk.Frame):
 	def __init__(self, parent):
