@@ -77,15 +77,19 @@ class QuickFilterForm(ttk.Frame):
         self.controller = None
 
         # Sample data
-        data = [
+        general_data = [
             ("passband attenuation", 3.01, "dB"),
             ("stopband attenuation", 40, "dB"),
-            ("impedance", 50, "Ohms"),
+            ("impedance", 50, "Ohm"),
             ("inductor Q", float('inf'), ""),
             ("capacitor Q", float('inf'), "")
         ]
-        self.specific_requirements_tableview.set_parameters(data)
-        self.general_requirements_tableview.set_parameters(data)
+        specific_data = [
+            ("passband frequency", 1, "GHz"),
+            ("stopband frequency", 2, "GHz")
+        ]
+        self.general_requirements_tableview.set_parameters(general_data)
+        self.specific_requirements_tableview.set_parameters(specific_data)
 
     @classmethod
     def list_to_dictionary(cls, parameters):
@@ -216,50 +220,15 @@ class QuickFilterForm(ttk.Frame):
         
     def update_form(self):
         pass
-        
-    #def read_form(self):
-    #     filter_specifications = {
-    #        "type" : FilterType.LOWPASS,
-    #        "family" : FilterFamily.BUTTERWORTH,
-    #        "passband attenuation" : 3.01, # dB
-    #        "stopband attenuation" : 40, # dB
-    #        "impedance" : 50, # Ohms
-    #        #"passband frequency" : 1, # GHz
-    #        #"stopband frequency" : 2, # GHz
-    #        "passband frequency" : 1.0E9, # Hz
-    #        "stopband frequency" : 2.0E9, # Hz
-    #    }
-    #
-    #     return filter_specifications
 
-    def get_parameters(self):
-        parameter_list_general = self.general_requirements_tableview.get_parameters()
-        parameter_list_specific = self.specific_requirements_tableview.get_parameters()
-        parameter_dictionary_general = self.list_to_dictionary(parameter_list_general)
-        parameter_dictionary_specific = self.list_to_dictionary(parameter_list_specific)
-        filter_specifications = {
-            "type" : FilterType.LOWPASS,
-            "family" : FilterFamily.BUTTERWORTH,
-            #"passband attenuation" : 3.01, # dB
-            #"stopband attenuation" : 40, # dB
-            "impedance" : 50, # Ohms
-            "passband frequency" : 1, # GHz
-            "stopband frequency" : 2, # GHz
-            "passband frequency" : 1.0E9, # Hz
-            "stopband frequency" : 2.0E9, # Hz
-        }
-        parameters = {}
-        for d in (
-            parameter_dictionary_general,
-            parameter_dictionary_specific,
-            filter_specifications):
-            parameters.update(d)
-
-        return parameters
-
-        
 
 class QuickFilterController:
+    UNIT_SCALE = {
+        "HZ": 1, "KHZ": 1E3, "MHZ": 1E6, "GHZ": 1E9,
+        "OHM": 1, "KOHM": 1E3, "MOHM": 1E6,
+        "F": 1, "UF": 1E-6, "NF": 1E-9, "PF": 1E-12,
+        "H": 1, "MH": 1E-3, "UH": 1E-6, "NH": 1E-9, "PH": 1E-12
+    }
     def __init__(self, model, view, plot):
         self.model = model
         self.view = view
@@ -271,11 +240,44 @@ class QuickFilterController:
 
     @classmethod
     def list_to_dictionary(cls, parameters):
-        return {
-            name: value
-            for name, value, unit in parameters
+        result = {}
+        for name, value, unit in parameters:
+            try:
+                value = float(value)
+            except ValueError:
+                pass
+            if unit:
+                scale = cls.UNIT_SCALE.get(unit.upper(), 1)
+                value *= scale                
+            result[name] = value
+
+        return result
+
+    def get_parameters(self):
+        parameter_list_general = self.view.general_requirements_tableview.get_parameters()
+        parameter_list_specific = self.view.specific_requirements_tableview.get_parameters()
+        parameter_dictionary_general = self.list_to_dictionary(parameter_list_general)
+        parameter_dictionary_specific = self.list_to_dictionary(parameter_list_specific)
+        if "passband frequency" in parameter_dictionary_specific:
+            pass  # What code goes here to convert frequency?
+        filter_specifications = {
+            "type": FilterType.LOWPASS,
+            "family": FilterFamily.BUTTERWORTH,
+            #"passband attenuation" : 3.01, # dB
+            #"stopband attenuation" : 40, # dB
+            "impedance": 50,  # Ohms
+            #"passband frequency" : 1.0E9, # Hz
+            #"stopband frequency" : 2.0E9, # Hz
         }
-        
+        parameters = {}
+        for d in (
+                parameter_dictionary_general,
+                parameter_dictionary_specific,
+                filter_specifications):
+            parameters.update(d)
+
+        return parameters
+
     def update_filter(self, parameters):
         if parameters["family"] == FilterFamily.BUTTERWORTH:
             self.model.filter = ButterworthFilter()
@@ -289,7 +291,7 @@ class QuickFilterController:
         self.plot.update(self.model.filter, graph_settings)
         
     def on_change(self):
-        parameters = self.view.get_parameters()
+        parameters = self.get_parameters()
 
         self.update_filter(parameters)
 

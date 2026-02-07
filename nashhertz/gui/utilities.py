@@ -5,6 +5,7 @@ import math
 
 
 class TableView(ttk.Frame):
+	UNITS = ("dB", "Hz", "kHz", "MHz", "GHz", "Ohms", "None")
 	def __init__(self, parent, controller=None):
 		super().__init__(parent)
 
@@ -43,7 +44,7 @@ class TableView(ttk.Frame):
 		self.editor = None
 		self.unit_editor = ttk.Combobox(
 			self,
-			values=("dB", "Hz", "Ohms", "None"),
+			values=TableView.UNITS,
 			state="readonly"
 		)
 		self.unit_editor.place_forget()
