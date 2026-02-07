@@ -1,8 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 
-import math
-
 
 class TableView(ttk.Frame):
 	UNITS = ("dB", "Hz", "kHz", "MHz", "GHz", "Ohms", "None")
@@ -243,6 +241,17 @@ class Chart(ttk.Frame):
 
 			self.plots = []
 
+	#TODO: Clear should be fixed and new_clear removed.
+	def new_clear(self):
+		self.canvas.delete("all")
+
+		self.maximum_x = None
+		self.minimum_x = None
+		self.maximum_y = None
+		self.minimum_y = None
+
+		self.plots = []
+
 	def draw_grid(self):
 		delta_x = self.canvas_width / self.grid_vertical_lines
 		delta_y = self.canvas_height / self.grid_horizontal_lines
@@ -279,6 +288,7 @@ class Chart(ttk.Frame):
 	#TODO: Fix gridlines (for multiple plots)
 	def plot(self, x, y, label=None, color=None, is_redrawing=False):
 		if not is_redrawing:
+			self.new_clear()
 			maximum_x = max(x)
 			maximum_y = max(y)
 			minimum_x = min(x)
