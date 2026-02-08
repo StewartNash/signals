@@ -1,9 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from signal_processor.stochastic import WienerFilter
-from signal_processor.stochastic import complex_wiener_coefficients, apply_complex_fir_filter
-from signal_processor.stochastic import wiener_coefficients, apply_fir_filter
+from signals.stochastic import WienerFilter
+from signals.stochastic import complex_wiener_coefficients, apply_complex_fir_filter
+from signals.stochastic import wiener_coefficients, apply_fir_filter
 
 # Complex Wiener filter
 np.random.seed(0)

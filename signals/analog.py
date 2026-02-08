@@ -1,8 +1,8 @@
 import math
 from abc import ABC, abstractmethod
 
-from signal_processor.filter import FilterType, FilterWindow, Filter, FilterFamily
-from signal_processor.utility import chebyshev
+from signals.filter import FilterType, FilterWindow, Filter, FilterFamily
+from signals.utility import chebyshev
 
 def butterworth_filter_coefficients(filter_type,
 		passband_frequency_low,

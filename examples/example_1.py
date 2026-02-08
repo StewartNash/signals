@@ -2,9 +2,9 @@ import math
 import random
 import matplotlib.pyplot as plt
 
-from signal_processor.filter import FilterFamily, FilterType
-from signal_processor.finite_impulse_response import FIRFilter
-from signal_processor.fourier_transform import discrete_fourier_transform
+from signals.filter import FilterFamily, FilterType
+from signals.finite_impulse_response import FIRFilter
+from signals.fourier_transform import discrete_fourier_transform
 
 def signal_generator(fs, f_signal):
     t = 0

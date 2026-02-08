@@ -1,8 +1,8 @@
 import math
-from signal_processor.filter import FilterType, FilterFamily
-from signal_processor.utility import bilinear_transform
-from signal_processor.utility import to_complex, complex_add, complex_subtract, complex_multiply, complex_divide
-from signal_processor.utility import real_to_complex
+from signals.filter import FilterType, FilterFamily
+from signals.utility import bilinear_transform
+from signals.utility import to_complex, complex_add, complex_subtract, complex_multiply, complex_divide
+from signals.utility import real_to_complex
 
 # filter_order			    nk, NK
 # passband_frequency		fp

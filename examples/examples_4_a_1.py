@@ -1,4 +1,4 @@
-from signal_processor.infinite_impulse_response import (
+from signals.infinite_impulse_response import (
     compute_filter_order,
     lowpass_parameters,
     butterworth_analog_poles,
@@ -9,7 +9,7 @@ from signal_processor.infinite_impulse_response import (
     denominator_coefficients,
     numerator_coefficients
     )
-from signal_processor.filter import FilterType, FilterFamily
+from signals.filter import FilterType, FilterFamily
 import numpy as np
 from plotting.plotting import plot_digital_response
 

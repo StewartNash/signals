@@ -1,8 +1,8 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-from signal_processor.finite_impulse_response import kaiser_coefficients, kaiser_filter_order, kaiser_bandstop, magnitude_response
-from signal_processor.filter import FilterType
+from signals.finite_impulse_response import kaiser_coefficients, kaiser_filter_order, kaiser_bandstop, magnitude_response
+from signals.filter import FilterType
 
 #-----------------------------------
 # Problem 5.3.9: Bandstop FIR Filter

@@ -1,6 +1,6 @@
 import unittest
-from signal_processor.filter import FilterType
-from signal_processor.finite_impulse_response import kaiser_filter_order, kaiser_coefficients
+from signals.filter import FilterType
+from signals.finite_impulse_response import kaiser_filter_order, kaiser_coefficients
 from data.ex_5_6 import ex_5_6_constants
 
 # filter_order			nk, NK

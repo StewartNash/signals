@@ -1,4 +1,4 @@
-from signal_processor.infinite_impulse_response import (
+from signals.infinite_impulse_response import (
     compute_filter_order,
     hplp_parameters,
     lowpass_parameters,
@@ -7,8 +7,8 @@ from signal_processor.infinite_impulse_response import (
     frequency_scaling_parameter,
     iir_filter
     )
-from signal_processor.filter import FilterType, FilterFamily
-from signal_processor.utility import polynomial_coefficients
+from signals.filter import FilterType, FilterFamily
+from signals.utility import polynomial_coefficients
 import numpy as np
 from plotting.plotting import plot_digital_response
 

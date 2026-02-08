@@ -1,6 +1,6 @@
 import math
 import numpy as np
-from signal_processor.filter import FilterType, FilterWindow, Filter
+from signals.filter import FilterType, FilterWindow, Filter
 
 # filter_order			nk, NK
 # passband_frequency		fp

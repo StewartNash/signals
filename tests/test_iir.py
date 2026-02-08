@@ -1,6 +1,6 @@
 import unittest
-from signal_processor.infinite_impulse_response import compute_filter_order, hplp_parameters, lowpass_parameters, FilterType, FilterFamily
-from signal_processor.infinite_impulse_response import butterworth_analog_poles, chebyshev_analog_poles
+from signals.infinite_impulse_response import compute_filter_order, hplp_parameters, lowpass_parameters, FilterType, FilterFamily
+from signals.infinite_impulse_response import butterworth_analog_poles, chebyshev_analog_poles
 from data.ex_4_a_1 import ex_4_a_1_constants
 from data.ex_4_a_2 import ex_4_a_2_constants
 
