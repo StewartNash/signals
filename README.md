@@ -1,4 +1,4 @@
-# signal_processor
+# Signals
 
 This is a signal processing library. It contains signal processing algorithms. Currently, the signal processing is exclusively digital signal processing (DSP).
 
@@ -6,7 +6,7 @@ This is a signal processing library. It contains signal processing algorithms. C
 
 This package contains a filter design application. In order to run, issue the following command:
 ```
-user@computer:~/signal_processor$ python3 -m nashhertz.main
+user@computer:~/signals$ python3 -m nashhertz.main
 ```
 
 This application will be segregated to its own repository in the future.
@@ -46,13 +46,13 @@ The 'sdr' folder contains examples from 'Software Defined Radio using MATLAB & S
 ## Unit testing
 
 ```
-user@computer:~/signal_processor$ python3 -m unittest discover tests
-user@computer:~/signal_processor$ python3 -m unittest discover -s tests -p 'test_*.py'
+user@computer:~/signals$ python3 -m unittest discover tests
+user@computer:~/signals$ python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
 ## Running examples
 ```
-user@computer:~/signal_processor$ python3 -m examples.examples_3_2_7_iir
+user@computer:~/signals$ python3 -m examples.examples_3_2_7_iir
 ```
 
 ## TODO

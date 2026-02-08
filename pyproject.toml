@@ -1,5 +1,5 @@
 [project]
-name = "signal_processor"
+name = "signals"
 version = "0.0.0"
 authors = [
 	{ name="Stewart Nash", email="pervigilent@gmail.com" },
@@ -15,4 +15,4 @@ license = "MIT"
 license-files = ["LICEN[CS]E*"]
 
 [project.urls]
-Homepage = "https://github.com/stewartnash/signal_processor"
+Homepage = "https://github.com/stewartnash/signals"

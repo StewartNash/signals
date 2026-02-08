@@ -4,8 +4,8 @@ from tkinter import ttk
 import numpy as np
 
 from nashhertz.gui.utilities import TableView, Chart, CodeView
-from signal_processor.filter import FilterType, FilterWindow, FilterFamily
-from signal_processor.analog import ButterworthFilter, ChebyshevFilter, AnalogFilter
+from signals.filter import FilterType, FilterWindow, FilterFamily
+from signals.analog import ButterworthFilter, ChebyshevFilter, AnalogFilter
 
 
 class FilterPlotView(ttk.Frame):
