@@ -3,8 +3,9 @@ from abc import ABC, abstractmethod
 
 from signals.filter import FilterType, FilterWindow, Filter, FilterFamily
 from signals.utility import chebyshev
+#TODO: Consolidate infinite_impulse_response.py methods with analog.py
 
-def butterworth_filter_coefficients(filter_type,
+def filter_coefficients(filter_type,
 		passband_frequency_low,
 		passband_frequency_high,
 		stopband_frequency_low,
@@ -26,6 +27,32 @@ def butterworth_filter_coefficients(filter_type,
 	
 	parameter_k0 = omega_p / omega_s
 	
+	return (
+		parameter_k0,
+		parameter_a,
+		parameter_epsilon,
+		parameter_lambda
+	)	
+
+def butterworth_filter_coefficients(
+		filter_type,
+		passband_frequency_low,
+		passband_frequency_high,
+		stopband_frequency_low,
+		stopband_frequency_high,
+		specified_passband_ripple,
+		minimum_stopband_attenuation):
+	
+	parameter_k0, parameter_a, parameter_epsilon, parameter_lambda = filter_coefficients(
+		filter_type,
+		passband_frequency_low,
+		passband_frequency_high,
+		stopband_frequency_low,
+		stopband_frequency_high,
+		specified_passband_ripple,
+		minimum_stopband_attenuation
+	)
+	
 	filter_order = int(math.log10(parameter_a) / math.log10(1 / parameter_k0))
 	
 	return (filter_order, parameter_epsilon)	
@@ -38,7 +65,7 @@ def butterworth_filter_order(filter_type,
 		specified_passband_ripple,
 		minimum_stopband_attenuation):
 
-	filter_order, parameter_epsilon = butterworth_filter_coefficients(
+	paramter_k0, parameter_a, parameter_epsilon, parameter_lambda = filter_coefficients(
 		filter_type,
 		passband_frequency_low,
 		passband_frequency_high,
@@ -47,6 +74,8 @@ def butterworth_filter_order(filter_type,
 		specified_passband_ripple,
 		minimum_stopband_attenuation
 	)
+	
+	filter_order = int(math.log10(parameter_a) / math.log10(1 / parameter_k0))
 	
 	return filter_order
 
@@ -74,7 +103,39 @@ def chebyshev_filter_coefficients(filter_type,
 	filter_order = int(math.acosh(parameter_a) / math.acosh(1 / parameter_k0))
 
 	return (filter_order, parameter_epsilon)
+	
+def elliptic_filter_order(filter_type,
+		passband_frequency_low,
+		passband_frequency_high,
+		stopband_frequency_low,
+		stopband_frequency_high,
+		specified_passband_ripple,
+		minimum_stopband_attenuation):
 
+	paramter_k0, parameter_a, parameter_epsilon, parameter_lambda = filter_coefficients(
+		filter_type,
+		passband_frequency_low,
+		passband_frequency_high,
+		stopband_frequency_low,
+		stopband_frequency_high,
+		specified_passband_ripple,
+		minimum_stopband_attenuation
+	)
+	
+	q, q0 = elliptic_parameters(parameter_k0)
+	
+	filter_order = int(math.log10(parameter_a) / math.log10(1 / q))
+	
+	return filter_order
+	
+def elliptic_parameters(parameter_k0):
+	K = parameter_k0
+	parameter_q0 = (1 - (1 - K ** 2)) ** 0.25 / (2 * (1 + (1 - K ** 2) ** 0.25))
+	q0 = parameter_q0	
+	parameter_q = q0 + 2 * q0 ** 5 + 15 * q0 ** 9 + 150 * q0 ** 13
+	q = parameter_q
+	
+	return q, q0
 
 class AnalogFilter(Filter, ABC):
 	def __init__(self):
@@ -201,3 +262,31 @@ class ChebyshevFilter(AnalogFilter):
 		# poles	= [s * omega_p for s in poles]
 
 		return poles
+		
+class EllipticFilter(AnalogFilter):
+	def __init__(self):
+		super().__init__()
+		
+	#TODO: Fix magnitude response from Butterworth to Elliptic
+	def magnitude_response(self, frequencies, is_db=False):
+		#frequencies = []
+		#magnitudes = []
+		filter_order, parameter_epsilon = butterworth_filter_coefficients(
+			self.type,
+			self.passband_frequency_low,
+			self.passband_frequency_high,
+			self.stopband_frequency_low,
+			self.stopband_frequency_high,
+			self.specified_passband_ripple,
+			self.minimum_stopband_attenuation
+		)
+		omega_p = 2 * math.pi * self.passband_frequency_high
+		natural_frequencies = [2 * math.pi * frequency for frequency in frequencies]
+		magnitudes = [math.sqrt(1 / (1 + parameter_epsilon ** 2 * (omega / omega_p) ** (2 * filter_order))) for omega in natural_frequencies]
+		if is_db:
+			magnitudes = [20 * math.log10(h) for h in magnitudes]
+
+		return (frequencies, magnitudes)
+		
+
+	
