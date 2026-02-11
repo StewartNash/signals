@@ -120,6 +120,14 @@ def chebyshev(x, n):
     term = complex_multiply(two_x, t1)
     return complex_subtract(term, t2)
 
+def elliptic(x, n, xi):
+    """
+    Elliptic rational function.
+    xi - selectivity factor
+    n - order
+    """
+    return x
+
 def bilinear_transform(value, is_s=True):
     """
     Perform bilinear transformation:

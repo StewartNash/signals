@@ -2,7 +2,7 @@ import math
 from abc import ABC, abstractmethod
 
 from signals.filter import FilterType, FilterWindow, Filter, FilterFamily
-from signals.utility import chebyshev
+from signals.utility import chebyshev, elliptic
 #TODO: Consolidate infinite_impulse_response.py methods with analog.py
 
 def filter_coefficients(filter_type,
