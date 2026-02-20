@@ -196,6 +196,10 @@ class Chart(ttk.Frame):
 		self.grid_horizontal_lines = 10
 		self.grid_family = "Arial"
 		self.grid_font = 10
+		self.grid_font_color = "white"
+			
+		self.grid_x_tick_offset = 12
+		self.grid_y_tick_offset = 12
 
 		self.maximum_x = None
 		self.minimum_x = None
@@ -233,6 +237,10 @@ class Chart(ttk.Frame):
 			self.grid_horizontal_lines = 10
 			self.grid_family = "Arial"
 			self.grid_font = 10
+			self.grid_font_color = "white"
+			
+			self.grid_x_tick_offset = 12
+			self.grid_y_tick_offset = 15
 
 			self.maximum_x = None
 			self.minimum_x = None
@@ -261,8 +269,8 @@ class Chart(ttk.Frame):
 		minimum_x = self.minimum_x
 		minimum_y = self.minimum_y
 
-		inverse_transform_x = lambda x, max_x, min_x, width: (max_x - min_x) * (x - 0) / (width - 0) + min_x
-		inverse_transform_y = lambda y, max_y, min_y, height: height - (max_y - min_y) * (y - height) / (height - 0) + min_y
+		inverse_transform_x = lambda x, max_x, min_x, width: min_x + (x - 0) * (max_x - min_x) / (width - 0)
+		inverse_transform_y = lambda y, max_y, min_y, height: min_y - (y - height) * (max_y - min_y) / (height - 0)
 		transform_x = lambda x, max_x, min_x, width: (width - 0) * (x - min_x) / (max_x - min_x) + 0
 		transform_y = lambda y, max_y, min_y, height: height - (height - 0) * (y - min_y) / (max_y - min_y)
 
@@ -270,20 +278,21 @@ class Chart(ttk.Frame):
 		for i in range(self.grid_vertical_lines + 1):
 			x = i * delta_x
 			self.canvas.create_line(x, 0, x, self.canvas_height, fill=self.grid_color, dash=(2, 2))
-			self.canvas.create_text(x, self.canvas_height - 10,
+			self.canvas.create_text(x, self.canvas_height - self.grid_x_tick_offset,
 				#text =f"{inverse_transform_x(x, maximum_x, minimum_x, self.canvas_width):.1f}",
 				text =f"{inverse_transform_x(x, maximum_x, minimum_x, self.canvas_width):.2e}",
-				fill=self.grid_color,
+				fill=self.grid_font_color,
 				font=(self.grid_family, self.grid_font))
 
 		# Draw and label horizontal grid lines
 		for i in range(self.grid_horizontal_lines + 1):
 			y = i * delta_y
 			self.canvas.create_line(0, y, self.canvas_width, y, fill=self.grid_color, dash=(2, 2))
-			self.canvas.create_text(10, y,
+			self.canvas.create_text(self.grid_y_tick_offset, y,
 				text =f"{inverse_transform_y(y, maximum_y, minimum_y, self.canvas_height):.1f}",
-				fill=self.grid_color,
+				fill=self.grid_font_color,
 				font=(self.grid_family, self.grid_font))
+			print(y, maximum_y, minimum_y)
 
 	#TODO: Fix gridlines (for multiple plots)
 	def plot(self, x, y, label=None, color=None, is_redrawing=False):
