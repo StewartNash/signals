@@ -292,7 +292,6 @@ class Chart(ttk.Frame):
 				text =f"{inverse_transform_y(y, maximum_y, minimum_y, self.canvas_height):.1f}",
 				fill=self.grid_font_color,
 				font=(self.grid_family, self.grid_font))
-			print(y, maximum_y, minimum_y)
 
 	#TODO: Fix gridlines (for multiple plots)
 	def plot(self, x, y, label=None, color=None, is_redrawing=False):

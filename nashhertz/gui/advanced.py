@@ -93,6 +93,27 @@ class AdvancedForm(ttk.Frame):
         )
         
         self.graphlimits_labelframe = tk.LabelFrame(self.left_lower_frame, text="Graph Limits")
+        
+        self.idealfilterresponse_labelframe = tk.LabelFrame(self.right_upper_frame, text="Ideal Filter Response")
+        self.frequencyrepsonse_button = tk.Button(self.idealfilterresponse_labelframe, text="Frequency Resp.", command=self.generic_callback)
+        self.transferfunction_button = tk.Button(self.idealfilterresponse_labelframe, text="Transfer Function", command=self.generic_callback)
+        self.timeresponse_button = tk.Button(self.idealfilterresponse_labelframe, text="Time Response", command=self.generic_callback)
+        self.polezeroplots_button = tk.Button(self.idealfilterresponse_labelframe, text="Pole Zero Plots", command=self.generic_callback)
+        self.sparameters_button = tk.Button(self.idealfilterresponse_labelframe, text="S Parameters", command=self.generic_callback)
+        
+        self.lumpeddesign_labelframe = tk.LabelFrame(self.right_lower_frame, text="Lumped Design")
+        self.lumpeddesign_notebook = ttk.Notebook(self.lumpeddesign_labelframe)
+        self.topology_frame = ttk.Frame(self.lumpeddesign_notebook)
+        self.parasitics_frame = ttk.Frame(self.lumpeddesign_notebook)
+        self.nodesandleads_frame = ttk.Frame(self.lumpeddesign_notebook)
+        
+        self.topology_frame.pack(fill='both', expand=True)
+        self.parasitics_frame.pack(fill='both', expand=True)
+        self.nodesandleads_frame.pack(fill='both', expand=True)
+        
+        self.lumpeddesign_notebook.add(self.topology_frame, text="Topology")
+        self.lumpeddesign_notebook.add(self.parasitics_frame, text="Parasitics")
+        self.lumpeddesign_notebook.add(self.nodesandleads_frame, text="Nodes & Leads")
 
         self.standardattenuation_checkbutton.pack()
         self.setorder_button.pack()
@@ -101,12 +122,26 @@ class AdvancedForm(ttk.Frame):
         self.multiplebands_checkbutton.pack()
         self.log_checkbutton.pack()
         
+        self.synthesizefilter_button = tk.Button(self.topology_frame, text="Synthesize Filter", command=self.generic_callback)
+        self.synthesizefilter_button.pack()
+        
         self.filtertype_labelframe.pack(side=tk.LEFT)
         self.filterattributes_labelframe.pack(side=tk.LEFT)
+        
+        self.frequencyrepsonse_button.grid(row=0, column=0)
+        self.transferfunction_button.grid(row=1, column=0)
+        self.timeresponse_button.grid(row=0, column=1)
+        self.polezeroplots_button.grid(row=1, column=1)
+        self.sparameters_button.grid(row=0, column=2)
         
         self.filterclass_labelframe.pack(side=tk.LEFT)
         self.freqscale_labelframe.pack(side=tk.LEFT)
         self.graphlimits_labelframe.pack(side=tk.LEFT)
+        
+        self.lumpeddesign_notebook.pack()
+        
+        self.idealfilterresponse_labelframe.pack(side=tk.RIGHT)
+        self.lumpeddesign_labelframe.pack(side=tk.RIGHT)
 
         self.left_upper_frame.pack()
         self.left_lower_frame.pack()
