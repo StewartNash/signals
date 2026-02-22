@@ -102,7 +102,7 @@ class AdvancedForm(ttk.Frame):
         self.sparameters_button = tk.Button(self.idealfilterresponse_labelframe, text="S Parameters", command=self.generic_callback)
         
         self.lumpeddesign_labelframe = tk.LabelFrame(self.right_lower_frame, text="Lumped Design")
-        self.lumpeddesign_notebook = ttk.Notebook(self.lumpeddesign_labelframe)
+        self.lumpeddesign_notebook = ttk.Notebook(self.lumpeddesign_labelframe, width=400, height=400)
         self.topology_frame = ttk.Frame(self.lumpeddesign_notebook)
         self.parasitics_frame = ttk.Frame(self.lumpeddesign_notebook)
         self.nodesandleads_frame = ttk.Frame(self.lumpeddesign_notebook)
