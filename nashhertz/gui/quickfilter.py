@@ -58,7 +58,7 @@ class QuickFilter:
             #"passband frequency" : 1, # GHz
             #"stopband frequency" : 2, # GHz
             "passband frequency" : 1.0E9, # Hz
-            "stopband frequency" : 2.0E9, # Hz
+            "stopband frequency" : 2.0E9 # Hz
         }
         filter.set_parameters(filter_specifications)
         stopband_frequency = filter.stopband_frequency_low

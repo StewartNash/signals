@@ -1,4 +1,5 @@
 from signals.filter import Filter
+from signals.Analog import ButterworthFilter
 import data.constants
 
 import numpy as np
@@ -186,3 +187,41 @@ class FilterCircuit(Circuit):
         
     def get_circuit(self):
         pass
+        
+def driving_point_impedance(poles, zeros, load):
+    if zeros is None:
+        zeros = [1]
+        numerator = Polynomial(values=zeros, is_coefficients=True)
+    else:
+        numerator = Polynomial(values=zeros, is_coefficients=False)
+    denominator = Polynomial(values=poles, is_coefficients=False)
+    transfer_function = RationalFunction(numerator, denominator)
+    load_impedance = Polynomial(load)
+    unity = Polynomial(1)
+    load_impedance = RationalFunction(load_impedance, unity)
+    impedance = (load_impedance - load_impedance * transfer_function) / transfer_function
+    
+    return impedance
+    
+def ladder_elements(impedance):
+    return impedance.continued_fraction
+    
+if __name__ == "__main__":
+        filter = ButterworthFilter()
+        filter_specifications = {
+            "type" : FilterType.LOWPASS,
+            "family" : FilterFamily.BUTTERWORTH,
+            "passband attenuation" : 3.01, # dB
+            "stopband attenuation" : 40, # dB
+            "impedance" : 50, # Ohms
+            "passband frequency" : 1 / (2 * np.pi), # Hz
+            "stopband frequency" : 1 / (2 * np.pi# Hz
+        }
+        filter.set_parameters(filter_specifications)
+        poles = filter.get_poles()
+        zeros = None
+        load = 50
+        impedance = driving_point_impedance(poles, zeros, load)
+        ladder = ladder_elements(impedance)
+        
+    
