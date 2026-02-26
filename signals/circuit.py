@@ -1,147 +1,32 @@
 from signals.filter import Filter
+from signals.utility import Polynomial, RationalFunction
 from signals.Analog import ButterworthFilter
 import data.constants
 
-import numpy as np
-import nump.polynomial.polynomial as poly
 import enum
+import numpy as np
 
+def butterworth_prototypes(order):
+    g = []
+    n = order
+    for k in range(1, n + 1):
+        value = 2 * np.sin((2 * k - 1) * np.pi / (2 * n))
+        g.append(value)
+    
+    return g
 
-class Polynomial:
-    def __init__(self, values, is_coefficients=True):
-        if is_coefficients:
-            self.set_coefficients(values)
-        else:
-            self.set_roots(values)
+def butterworth_ladder(order, impedance, cutoff_frequency):
+    g = butterworth_prototypes(order)
+    elements = []
+    for i, g_k in enumerate(g):
+        if i % 2 == 0: # series L
+            inductance = impedance   * g_k / cutoff_frequency
+            elements.append(("L", inductance))
+        else: # shunt C
+            capacitance = g_k / (impedance * cutoff_frequency)
+            elements.append(("C", capacitance))
 
-    def __repr__(self):
-        return f"Polynomial({self.coefficients})"
-
-    def get_roots(self):
-        return np.roots(self.coefficients)
-
-    def get_coefficients(self):
-        return self.coefficients
-
-    def set_roots(self, values):
-        self.roots = values
-        self.coefficients = np.poly(self.roots)
-
-    def set_coefficients(self, values):
-        self.coefficients = np.array(values, dtype=float)
-
-    # -----------------
-    # Arithmetic
-    # -----------------
-
-    def __add__(self, other):
-        return Polynomial(np.polyadd(self.coefficients, other.coefficients))
-
-    def __sub__(self, other):
-        return Polynomial(np.polysub(self.coefficients, other.coefficients))
-
-    def __mul__(self, other):
-        return Polynomial(np.polymul(self.coefficients, other.coefficients))
-
-    def __truediv__(self, other):
-        """
-        Polynomial long division
-        Returns (quotient, remainder)
-        """
-        q, r = np.polydiv(self.coefficients, other.coefficients)
-        return Polynomial(q), Polynomial(r)
-
-    # -----------------
-    # Polynomial GCD
-    # -----------------
-
-    @staticmethod
-    def gcd(p1, p2, tol=1e-12):
-        """
-        Euclidean algorithm for polynomial GCD
-        """
-        a = Polynomial(p1.coefficients.copy())
-        b = Polynomial(p2.coefficients.copy())
-
-        while np.any(np.abs(b.coefficients) > tol):
-            _, r = a / b
-            a, b = b, r
-
-        # Normalize leading coefficient to 1
-        if abs(a.coefficients[0]) > tol:
-            a.coefficients = a.coefficients / a.coefficients[0]
-
-        return a
-
-
-class RationalFunction:
-    def __init__(self, numerator, denominator):
-        self.numerator = numerator
-        self.denominator = denominator
-
-    def __repr__(self):
-        return f"RationalFunction({self.numerator}, {self.denominator})"
-
-    # -----------------
-    # Arithmetic
-    # -----------------
-
-    def __add__(self, other):
-        num = (self.numerator * other.denominator +
-               other.numerator * self.denominator)
-        den = self.denominator * other.denominator
-        return RationalFunction(num, den).reduce()
-
-    def __sub__(self, other):
-        num = (self.numerator * other.denominator -
-               other.numerator * self.denominator)
-        den = self.denominator * other.denominator
-        return RationalFunction(num, den).reduce()
-
-    def __mul__(self, other):
-        num = self.numerator * other.numerator
-        den = self.denominator * other.denominator
-        return RationalFunction(num, den).reduce()
-
-    def __truediv__(self, other):
-        num = self.numerator * other.denominator
-        den = self.denominator * other.numerator
-        return RationalFunction(num, den).reduce()
-
-    # -----------------
-    # Rational Reduction
-    # -----------------
-
-    def reduce(self):
-        gcd_poly = Polynomial.gcd(self.numerator, self.denominator)
-        q_num, _ = self.numerator / gcd_poly
-        q_den, _ = self.denominator / gcd_poly
-        return RationalFunction(q_num, q_den)
-
-    # -----------------
-    # Continued Fraction Expansion
-    # -----------------
-
-    def continued_fraction(self):
-        """
-        Cauer continued fraction expansion.
-
-        Returns list of Polynomial quotients.
-        Useful for ladder extraction.
-        """
-
-        num = Polynomial(self.numerator.coefficients.copy())
-        den = Polynomial(self.denominator.coefficients.copy())
-
-        expansion = []
-
-        while np.any(np.abs(den.coefficients) > 1e-12):
-            q, r = num / den
-            expansion.append(q)
-            num, den = den, r
-
-        return expansion
-      
+    return elements
 
 
 class ComponentType(enum.Enum):
@@ -223,5 +108,4 @@ if __name__ == "__main__":
         load = 50
         impedance = driving_point_impedance(poles, zeros, load)
         ladder = ladder_elements(impedance)
-        
-    
+
