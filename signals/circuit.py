@@ -93,14 +93,18 @@ def ladder_elements(impedance):
     
 if __name__ == "__main__":
         filter = ButterworthFilter()
+        frequency_stopband = 2.0E9 # Hz
+        frequency_passband = 1.0E9 # Hz
+        omega_s = 2 * np.pi * frequency_stopband
+        omega_p = 2 * np.pi * frequency_passband
         filter_specifications = {
             "type" : FilterType.LOWPASS,
             "family" : FilterFamily.BUTTERWORTH,
             "passband attenuation" : 3.01, # dB
             "stopband attenuation" : 40, # dB
-            "impedance" : 50, # Ohms
-            "passband frequency" : 1 / (2 * np.pi), # Hz
-            "stopband frequency" : 1 / (2 * np.pi# Hz
+            "impedance" : 1, # Normalized impedance
+            "passband frequency" : 1 / (2 * np.pi) # Normalized frequency
+            "stopband frequency" : omega_s / omega_p / (2 * np.pi)
         }
         filter.set_parameters(filter_specifications)
         poles = filter.get_poles()
