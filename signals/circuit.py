@@ -6,28 +6,6 @@ import data.constants
 import enum
 import numpy as np
 
-def butterworth_prototypes(order):
-    g = []
-    n = order
-    for k in range(1, n + 1):
-        value = 2 * np.sin((2 * k - 1) * np.pi / (2 * n))
-        g.append(value)
-    
-    return g
-
-def butterworth_ladder(order, impedance, cutoff_frequency):
-    g = butterworth_prototypes(order)
-    elements = []
-    for i, g_k in enumerate(g):
-        if i % 2 == 0: # series L
-            inductance = impedance   * g_k / cutoff_frequency
-            elements.append(("L", inductance))
-        else: # shunt C
-            capacitance = g_k / (impedance * cutoff_frequency)
-            elements.append(("C", capacitance))
-
-    return elements
-
 
 class ComponentType(enum.Enum):
 	RESISTOR = 1
@@ -72,6 +50,30 @@ class FilterCircuit(Circuit):
         
     def get_circuit(self):
         pass
+      
+    @classmethod
+    def butterworth_prototypes(cls, order):
+        g = []
+        n = order
+        for k in range(1, n + 1):
+            value = 2 * np.sin((2 * k - 1) * np.pi / (2 * n))
+            g.append(value)
+        
+        return g
+
+    @classmethod
+    def butterworth_ladder(cls, order, impedance, cutoff_frequency):
+        g = butterworth_prototypes(order)
+        elements = []
+        for i, g_k in enumerate(g):
+            if i % 2 == 0: # series L
+                inductance = impedance   * g_k / cutoff_frequency
+                elements.append(("L", inductance))
+            else: # shunt C
+                capacitance = g_k / (impedance * cutoff_frequency)
+                elements.append(("C", capacitance))
+
+        return elements
         
 def driving_point_impedance(poles, zeros, load):
     if zeros is None:
