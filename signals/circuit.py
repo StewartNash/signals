@@ -20,6 +20,8 @@ class Component:
     def __init__(self, component_type, value):
         self.component_type = component_type
         self.value = value
+        self.terminals = 2
+        self.nodes = None
         
     @classmethod
     def component(cls, component_pair):
@@ -41,7 +43,13 @@ class Component:
 
 class Circuit:
     def __init__(self):
-        pass
+        self.nodes = []
+        self.components = []
+        
+    def add_component(self, component, nodes):
+        component.nodes = nodes
+        self.components.append[component]
+        self.nodes = list(set(self.nodes + nodes))
         
 
 class FilterCircuit(Circuit):
