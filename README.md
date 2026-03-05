@@ -1,6 +1,6 @@
 # Signals
 
-This is a signal processing library. It contains signal processing algorithms. Currently, the signal processing is exclusively digital signal processing (DSP).
+This is a signal processing library. It contains signal processing algorithms. The focus of this signal processing library is mainly digital signal processing (DSP), but there is also an extensive collection of analog signal processing.
 
 ## NashHertz Filters
 
