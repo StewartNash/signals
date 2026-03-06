@@ -51,6 +51,14 @@ class Circuit:
         self.components.append[component]
         self.nodes = list(set(self.nodes + nodes))
         
+    def to_ngspice(self):
+        message = ""
+        for component in self.components:
+            if component.component_type == ComponentType.RESISTOR:
+                temporary += "R"
+                temporary += " " + component.nodes[0] + " " + component.nodes[1]
+        return message
+        
 
 class FilterCircuit(Circuit):
     def __init__(self, filter):
