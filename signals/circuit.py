@@ -43,6 +43,7 @@ class Component:
 
 class Circuit:
     def __init__(self):
+        self.name = ""
         self.nodes = []
         self.components = []
         
