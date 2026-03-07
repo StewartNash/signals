@@ -39,6 +39,12 @@ class Component:
             return Component(ComponentType.CURRENT_SOURCE, value)
         else:
             raise ValueError("Unknown component value")
+            
+            
+class VoltageSource(Component):
+    def __init__(self, value):
+        super.__init__(ComponentType.VOLTAGE_SOURCE, value)
+        
 
 
 class Circuit:
@@ -54,10 +60,13 @@ class Circuit:
         
     def to_ngspice(self):
         message = ""
+        message += self.name + "\n"
         for component in self.components:
             if component.component_type == ComponentType.RESISTOR:
                 temporary += "R"
                 temporary += " " + component.nodes[0] + " " + component.nodes[1]
+        message += ".end\n"
+        
         return message
         
 
