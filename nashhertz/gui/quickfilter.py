@@ -68,6 +68,14 @@ class QuickFilter:
         self.frequencies = np.linspace(minimum_frequency, maximum_frequency, self.resolution)
         
         return filter
+        
+    def set_parameter(self, parameter):
+        if parameter[0] == "family":
+            family = parameter[0]
+            if family == FilterFamily.BUTTERWORTH:
+                pass
+            else:
+                pass
     
 
 class QuickFilterForm(ttk.Frame):
@@ -134,11 +142,11 @@ class QuickFilterForm(ttk.Frame):
         self.bandpass_button = tk.Button(self.class_frame, text="Band Pass")
         self.bandstop_button = tk.Button(self.class_frame, text="Band Stop")
 
-        self.bessel_button = tk.Button(self.shape_frame, text="Bessel")
-        self.butterworth_button = tk.Button(self.shape_frame, text="Butterworth")
-        self.chebyshev_1_button = tk.Button(self.shape_frame, text="Chebyshev I")
-        self.chebyshev_2_button = tk.Button(self.shape_frame, text="Chebyshev II")
-        self.elliptic_button = tk.Button(self.shape_frame, text="Elliptic")
+        self.bessel_button = tk.Button(self.shape_frame, text="Bessel", command=lambda: self.controller.set_family(FilterFamily.BESSEL))
+        self.butterworth_button = tk.Button(self.shape_frame, text="Butterworth", command=lambda: self.controller.set_family(FilterFamily.BUTTERWORTH))
+        self.chebyshev_1_button = tk.Button(self.shape_frame, text="Chebyshev I", command=lambda: self.controller.set_family(FilterFamily.CHEBYSHEV_1))
+        self.chebyshev_2_button = tk.Button(self.shape_frame, text="Chebyshev II", command=lambda: self.controller.set_family(FilterFamily.CHEBYSHEV_2))
+        self.elliptic_button = tk.Button(self.shape_frame, text="Elliptic", command=lambda: self.controller.set_family(FilterFamily.ELLIPTIC))
         
         self.update_button = tk.Button(self.update_frame, text="Update")
 
@@ -277,12 +285,20 @@ class QuickFilterController:
             parameters.update(d)
 
         return parameters
+        
+    def set_family(self, family):
+        self.model.set_parameter(("family", family))
+        
+    def set_parameter(self, parameter):
+        self.model.set_parameter(parameter)
 
     def update_filter(self, parameters):
         if parameters["family"] == FilterFamily.BUTTERWORTH:
             self.model.filter = ButterworthFilter()
         elif parameters["family"] == FilterFamily.CHEBYSHEV:
             self.model.filter = ChebyshevFilter()
+        elif parameters["family"] == FilterFamily.ELLIPTIC:
+            self.model.filter = EllipticFilter()
         else:
             self.model.filter = AnalogFilter()
         self.model.filter.set_parameters(parameters)
