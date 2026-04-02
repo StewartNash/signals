@@ -297,6 +297,10 @@ class QuickFilterController:
             self.model.filter = ButterworthFilter()
         elif parameters["family"] == FilterFamily.CHEBYSHEV:
             self.model.filter = ChebyshevFilter()
+        elif parameters["family"] == FilterFamily.CHEBYSHEV_1:
+            self.model.filter = ChebyshevFilter()
+        elif parameters["family"] == FilterFamily.CHEBYSHEV_2:
+            self.model.filter = ChebyshevFilter()
         elif parameters["family"] == FilterFamily.ELLIPTIC:
             self.model.filter = EllipticFilter()
         else:
