@@ -579,9 +579,72 @@ or, in vector notation,
 \end{equation}
 The solution to this problem for the unknown filter vector $\mathbf{h}$ can be approached in two ways, depending on the optimality criterion chosen
 \begin{equation}
-	\min_{\mathbf{h}}E\left[|e[n]|^2\right]
+	\min_{\mathbf{h}}E\left[e^2[n]\right]
 \end{equation}
 \emph{(Wiener filtering problem)}
+\begin{equation}
+	\min_{\mathbf{h}}\sum{|e[n]|^2}
+\end{equation}
+\emph{(Least squares problem)}
+The Wiener filtering problem takes a stochastic viewpoint where the filter is optimized in an expected value sense (minimum mean-squared error). As an alternative, the least-squares problem views the time series involved as deterministic and the filter is optimized for the specific sequences of record (minimum sum-squared error). Both viewpoints give rise to similar mathematical expressions for $\mathbf{h}$.\\
+The distinction between the Wiener filtering and least squares problems is made in the definitions of $R_{ss}[0]$, $\mathbf{v}$ and $\mathbf{T}$ where
+\begin{equation}
+	\mathbf{v}=
+	\begin{bmatrix}
+		R_{xs}[0]\\
+		R_{xs}[1]\\
+		\vdots\\
+		R_{xs}[N]
+	\end{bmatrix}
+\end{equation}
+\begin{equation}
+	\mathbf{T}=
+	\begin{bmatrix}
+		R_{xx}[0] & R_{xx}^*[1] & \cdots&R_{xx}^*[N-1]&R_{xx}^*[N]\\
+		R_{xx}[1] & R_{xx}[0] & \cdots & R_{xx}^*[N-2] & R_{xx}^*[N-1]\\
+		\vdots & \vdots & \ddots & \vdots & \vdots\\
+		R_{xx}[N-1] & R_{xx}[N-2] & \cdots & R_{xx}[0] & R_{xx}^*[1]\\
+		R_{xx}[N] & R_{xx}[N-1] & \cdots & R_{xx}[1] & R_{xx}[0]
+	\end{bmatrix}
+\end{equation}
+For the Wiener filtering problem
+\begin{equation}
+	R_{ss}[0]=E[s[n]s^*[n]]
+\end{equation}
+\begin{equation}
+	\mathbf{v}=\{E[s[n]x^*[n-j]]\}=\{R_{sx}[j]\}
+\end{equation}
+\begin{equation}
+	\mathbf{T}=\{E[x[n-k]x^*[n-j]]\}
+\end{equation}
+And, for the least squares problem
+\begin{equation}
+	R_{ss}[0]=\sum_n{s[n]s^*[n]}
+\end{equation}
+\begin{equation}
+	\mathbf{v}=\{\sum_ns[n]x^*[n-j]\}=\{v_j\}
+\end{equation}
+\begin{equation}
+	\mathbf{T}=\{\sum_nx[n-k]x^*[n-j]\}
+\end{equation}
+The next step in solving for the unknown filter vector $\mathbf{h}$ is to write an expression for squared error based on Eq. 11.3
+\begin{equation}
+	|e[n]|^2=s^*[n]s[n]+s^*[n]\mathbf{h}^T\mathbf{x}+\mathbf{h}\mathbf{x}^*d[n]+\mathbf{h}\mathbf{x}^*\mathbf{h}^T\mathbf{x}
+\end{equation}
+By making use of the definitions of $R_{ss}[0]$, $\mathbf{v}$, and $\mathbf{T}$ the average squared error  $\varepsilon(\mathbf{h})$ can be derived from Eq. 11.14 for both the Wiener filtering and least squares problems as
+\begin{equation}
+	\varepsilon(\mathbf{h})=R_{ss}[0]+\mathbf{v}\mathbf{h}+\mathbf{h}\mathbf{v}+\mathbf{h}\mathbf{T}\mathbf{h}
+\end{equation}
+Now, minimizing $\varepsilon(\mathbf{h})$ with respect to $\mathbf{h}$ leads to the following equation
+\begin{equation}
+	0=\mathbf{v}+\mathbf{T]^T\mathbf{h}
+\end{equation}
+or
+\begin{equation}
+	\mathbf{T]^T\mathbf{h}=-\mathbf{v}
+\end{equation}
+Expressing Eq. 11.17 in expanded form wil be of interest in the next section
+
 
 \backmatter
 
