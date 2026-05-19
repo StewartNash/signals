@@ -633,7 +633,7 @@ The next step in solving for the unknown filter vector $\mathbf{h}$ is to write 
 \end{equation}
 By making use of the definitions of $R_{ss}[0]$, $\mathbf{v}$, and $\mathbf{T}$ the average squared error  $\varepsilon(\mathbf{h})$ can be derived from Eq. 11.14 for both the Wiener filtering and least squares problems as
 \begin{equation}
-	\varepsilon(\mathbf{h})=R_{ss}[0]+\mathbf{v}\mathbf{h}+\mathbf{h}\mathbf{v}+\mathbf{h}\mathbf{T}\mathbf{h}
+	\varepsilon(\mathbf{h})=R_{ss}[0]+\mathbf{v}^\dagger\mathbf{h}+\mathbf{h}\mathbf{v}+\mathbf{h}\mathbf{T}\mathbf{h}
 \end{equation}
 Now, minimizing $\varepsilon(\mathbf{h})$ with respect to $\mathbf{h}$ leads to the following equation
 \begin{equation}
